@@ -1,3 +1,3 @@
-1. Spearheaded tailored business tool development in cybersecurity, ensuring client satisfaction through specialized solutions addressing diverse cyber threats and challenges.
+Led development of customized cybersecurity tools, ensuring client satisfaction with specialized solutions.
 
-2. Engineered 50+ automation scripts, optimizing client productivity and reducing manual efforts, while also delivering a sophisticated GUI-based Spam Email Analyzer and executing a Sentiment Analysis POC, contributing to enhanced customer satisfaction.
+Engineered 50+ automation scripts, delivered a GUI-based Spam Email Analyzer, and executed Sentiment Analysis POC for enhanced customer satisfaction and productivity optimization.
