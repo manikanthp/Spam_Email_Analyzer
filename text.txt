@@ -1,5 +1,4 @@
-Led the "NLP Document Image Data Extraction" project, applying custom Computer Vision techniques to enhance image quality and achieve higher accuracy for the model.
-Tailored OpenCV algorithms and integrated them with other mathematical algorithms to extract data in alignment with specific business requirements.
-Spearheaded the training of a multimodality model utilizing customized client data; employed advanced techniques to augment the dataset, resulting in improved model performance.
-Collaborated closely with frontend, middleware, and UI teams to ensure seamless rendering of output aligned with client expectations.
-Orchestrated the deployment of the model using Azure DevOps, implementing robust monitoring mechanisms to track and enhance model performance over time.
+Designed and deployed a high-throughput image quality test & classification mobile app for analyzing user-captured images.
+Optimized serverless architecture on AWS: Leveraged AWS S3, Lambda, SageMaker, API Gateway & CloudWatch to achieve cost-efficient scalability and real-time image processing.
+On-device & cloud model expertise: Trained both lightweight on-device image quality model for mobile and high-accuracy image classification model on SageMaker in the cloud.
+Data-driven optimization & cost savings: Employed AutoML, spot instances, serverless functions, and lifecycle policies to minimize infrastructure costs.
