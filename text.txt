@@ -4,71 +4,115 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Page</title>
+    <title>PDF Viewer</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- PDF.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.11.363/build/pdf_viewer.css">
+
     <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5;
+        /* Adjust container heights and add padding as needed */
+        .container-fluid {
+            padding: 20px;
         }
 
-        .loading-container {
-            text-align: center;
-            display: none;
-        }
-
-        .loading-bar {
-            width: 100%;
-            height: 20px;
-            background-color: #3498db;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .loading-text {
-            position: relative;
-            z-index: 1;
-            color: white;
-            font-size: 18px;
+        /* Style for the PDF container */
+        #pdf-container {
+            height: 600px; /* Set the desired height for the PDF container */
+            overflow-y: auto;
+            border: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
-    <div class="loading-container">
-        <div class="loading-bar"></div>
-        <p class="loading-text">Loading...</p>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- PDF Viewer Container -->
+        <div class="col-md-12">
+            <h2>PDF Viewer</h2>
+            <div id="pdf-container"></div>
+        </div>
     </div>
+</div>
 
-    <h1>Your Content Goes Here</h1>
+<!-- Bootstrap JS and Popper.js (for Bootstrap modal and popover) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <button onclick="submitForm()">Submit</button>
+<!-- PDF.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.11.363/build/pdf.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.11.363/build/pdf_viewer.js"></script>
 
-    <script>
-        function submitForm() {
-            // Display the loading container
-            var loadingContainer = document.querySelector('.loading-container');
-            loadingContainer.style.display = 'flex';
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // PDF file path passed from Flask
+        const pdfFilePath = '{{ pdf_file_path }}';
 
-            // Simulate a request to an endpoint (e.g., AJAX request)
-            fetch('/simulate_request')
-                .then(response => response.json())
-                .then(data => {
-                    // Hide the loading container when the response is received
-                    loadingContainer.style.display = 'none';
-                    console.log(data);
+        // Fetch the PDF document
+        const loadingTask = pdfjsLib.getDocument(pdfFilePath);
+        loadingTask.promise.then(function(pdfDocument) {
+            // Set up the PDF viewer
+            const pdfViewer = new pdfjsViewer.PDFViewer({
+                container: document.getElementById('pdf-container'),
+            });
+            pdfViewer.setDocument(pdfDocument);
 
-                    // Redirect to a different page or perform other actions as needed
-                    window.location.href = '/result';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    loadingContainer.style.display = 'none';
+            // Set up the PDF thumbnail viewer (optional)
+            const thumbnailViewer = new pdfjsViewer.ThumbnailViewer({
+                container: document.getElementById('pdf-container'),
+                enableFireFoxScroller: false,
+            });
+            thumbnailViewer.setDocument(pdfDocument);
+
+            // Set up the PDF link service (optional)
+            const pdfLinkService = new pdfjsViewer.PDFLinkService();
+            pdfLinkService.setDocument(pdfDocument, null);
+
+            // Set up the PDF history (optional)
+            const pdfHistory = new pdfjsViewer.PDFHistory({
+                linkService: pdfLinkService,
+            });
+            pdfLinkService.setHistory(pdfHistory);
+
+            // Initial rendering
+            pdfViewer.currentPageNumber = 1;
+            pdfViewer.currentScaleValue = 'auto';
+            pdfViewer.eventBus.on('pagesinit', function () {
+                pdfViewer.pagesPromise.then(function() {
+                    pdfHistory.initialize({
+                        fingerprint: pdfDocument.fingerprint,
+                        viewOnLoad: { destination: null },
+                    });
                 });
-        }
-    </script>
+            });
+
+            // Set up keyboard shortcuts (optional)
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey || event.metaKey) {
+                    // Ctrl or Command key
+                    switch (event.key) {
+                        case '0':
+                            event.preventDefault();
+                            pdfViewer.currentScaleValue = 'page-width';
+                            break;
+                        case 'ArrowLeft':
+                            event.preventDefault();
+                            pdfHistory.back();
+                            break;
+                        case 'ArrowRight':
+                            event.preventDefault();
+                            pdfHistory.forward();
+                            break;
+                    }
+                }
+            });
+        }, function(reason) {
+            console.error('Error loading PDF: ' + reason);
+        });
+    });
+</script>
+
 </body>
 </html>
