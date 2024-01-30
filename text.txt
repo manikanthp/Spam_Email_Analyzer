@@ -1,65 +1,27 @@
-**No-Reference Image Quality Assessment Using BRISQUE**
+**Image Quality Assessment on Metal Image**
 
-Image quality assessment (IQA) is the task of evaluating the perceptual quality of an image. There are different types of IQA methods, depending on whether they require a reference image or not. Full-reference IQA methods compare a distorted image with a pristine version of the same image, while reduced-reference IQA methods use some information extracted from the reference image. No-reference IQA methods, also known as blind or referenceless IQA methods, do not have any access to the reference image and only rely on the distorted image itself.
+Image quality assessment (IQA) is a task that aims to measure the perceptual quality of images, especially in the presence of distortions or artifacts. IQA can be useful for various applications, such as evaluating image capture pipelines, storage techniques, and sharing media. IQA can also be applied to specific domains, such as metal surface defect detection, material processing, and quality assurance.
 
-One of the most popular and effective no-reference IQA methods is BRISQUE, which stands for Blind/Referenceless Image Spatial Quality Evaluator. BRISQUE was proposed by Mittal et al. in 2012¹ and won the first place in the LIVE Challenge on Image Quality Assessment². BRISQUE is based on the assumption that natural images have certain statistical properties that are altered by distortions such as noise, blur, compression artifacts, etc. Therefore, by measuring the deviation of these properties from their natural values, BRISQUE can estimate the quality of an image.
+There are two main types of IQA methods: reference-based and no-reference. Reference-based methods compare the distorted image with a reference image that is assumed to be of high quality, and compute a similarity score based on some metrics. No-reference methods do not require a reference image, and instead rely on features extracted from the distorted image, such as naturalness, structure, or texture.
 
-The main steps of the BRISQUE algorithm are as follows:
+Some of the research papers and models that are related to IQA on metal image are:
 
-1. Convert the input image to grayscale and apply a 2D discrete cosine transform (DCT) to obtain the luminance coefficients.
-2. Divide the image into non-overlapping blocks of size 32x32 pixels and compute the mean and standard deviation of the luminance coefficients in each block.
-3. Apply a pointwise divisive normalization to each block using the mean and standard deviation values. This step aims to remove the dependencies between neighboring pixels and enhance the local features.
-4. Compute the asymmetric generalized Gaussian distribution (AGGD) parameters of the normalized coefficients and their pairwise products along the horizontal, vertical, and diagonal directions. These parameters capture the heavy-tailed nature of the natural image statistics and their variations due to distortions.
-5. Concatenate the AGGD parameters of all blocks to form a 36-dimensional feature vector that represents the image.
-6. Use a support vector regression (SVR) model trained on a large database of images with human opinion scores to map the feature vector to a quality score. The quality score is a scalar value that ranges from 0 to 100, where a higher value indicates a better quality.
+- **Image Data Assessment Approach for Deep Learning-Based Metal Surface Defect-Detection Systems**⁵: This paper proposes a comprehensive assessment score that combines defect visibility, visibility distribution, and overexposure based on the operation principles of convolutional neural networks (CNNs). The score can be used to assess whether the training image dataset can improve the defect detection rate of the deep learning models, such as You Only Look Once (YOLO), Single Shot MultiBox Detector (SSD), and Faster Region-based Convolutional Neural Network (Faster R-CNN), without training defect image datasets. The paper compares the proposed approach with existing IQA methods, such as mean absolute error (MAE), peak signal-to-noise ratio (PSNR), universal image quality index (UIQI), natural image quality evaluator (NIQE), perception-based quality evaluator (PIQE), and blind/referenceless image spatial quality evaluator (BRISQUE). The experiment results indicate that the proposed comprehensive assessment score is more correlated to the F2-score of the detection models than the IQA methods.
 
-The following figure illustrates the BRISQUE algorithm:
+- **Deep Learning Approaches to Image Texture Analysis in Material Processing**⁶: This paper compares three traditional approaches, based on the use of grey level co-occurrence matrices (GLCM), local binary patterns (LBP), and textons, with five transfer learning approaches, based on the use of AlexNet, VGG19, ResNet50, GoogLeNet, and MobileNetV2, for image texture analysis in material processing. The paper uses two simulated and one real-world case study, where the appearance of ultrahigh carbon steel is cast as a textural pattern recognition problem. The paper evaluates the ability of random forest models, as well as the CNNs themselves, to discriminate between different textures with the image features as input. The paper finds that the texton algorithm performed better than the LBP and GLCM algorithms and similar to the deep learning approaches when these were used directly, without any retraining. Partial or full retraining of the CNNs yielded considerably better results, with GoogLeNet and MobileNetV2 yielding the best results.
 
-```python
-# Pseudocode for BRISQUE algorithm
-def brisque(image):
-  # Convert image to grayscale
-  image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-  # Apply 2D DCT
-  image = cv2.dct(image)
-  # Initialize feature vector
-  features = []
-  # Loop over non-overlapping blocks
-  for block in image.split(32, 32):
-    # Compute mean and standard deviation of luminance coefficients
-    mean = block.mean()
-    std = block.std()
-    # Apply pointwise divisive normalization
-    block = (block - mean) / (std + 1e-6)
-    # Compute AGGD parameters of normalized coefficients
-    alpha, beta, gamma = fit_aggd(block)
-    # Compute AGGD parameters of pairwise products
-    alpha_h, beta_h, gamma_h = fit_aggd(block * block.shift(1, 0)) # horizontal
-    alpha_v, beta_v, gamma_v = fit_aggd(block * block.shift(0, 1)) # vertical
-    alpha_d, beta_d, gamma_d = fit_aggd(block * block.shift(1, 1)) # diagonal
-    # Append AGGD parameters to feature vector
-    features.extend([alpha, beta, gamma, alpha_h, beta_h, gamma_h, alpha_v, beta_v, gamma_v, alpha_d, beta_d, gamma_d])
-  # Convert feature vector to numpy array
-  features = np.array(features)
-  # Load pre-trained SVR model
-  model = load_model("brisque_svr_model.pkl")
-  # Predict quality score using SVR model
-  score = model.predict(features)
-  # Return quality score
-  return score
-```
+- **Metallographic Image Analysis for Quality Assurance of Metals: A Review**¹: This paper reviews the literature on metallographic analysis, which is crucial in the study of metallic materials because it provides information about properties (yield strength, tensile strength, elongation), which has a direct impact on material. The paper observes that image processing is widely used in the metallographic microstructure analysis, and morphological and contour-based image processing techniques are applied to calculate grain size. The paper also discusses the challenges and future directions of metallographic image analysis, such as improving the efficiency and accuracy of analysis, developing ultramicroscopy-based methods, and integrating artificial intelligence techniques.
 
-The BRISQUE algorithm is a simple yet powerful method for no-reference image quality assessment. It does not require any distortion-specific features or prior knowledge of the reference image. It can handle a wide range of distortions and achieve high correlation with human perception. It is also computationally efficient and can be easily implemented using OpenCV and scikit-learn libraries. BRISQUE is a useful tool for applications such as image compression, enhancement, restoration, and retrieval.
+- **Evaluation of the quality of CT images acquired with smart metal artifact reduction (SMAR) algorithm in patients with hip arthroplasty**⁷: This paper evaluates the quality of CT images acquired with smart metal artifact reduction (SMAR) algorithm in patients with hip arthroplasty, which is a common source of metal artifacts that degrade the image quality and diagnostic accuracy. The paper uses both subjective and objective methods to assess the image quality and the reduction of metal artifacts. Subjectively, three radiologists evaluated image quality and assigned a score for visualization of anatomic structures in the critical areas of interest. Objectively, the absolute CT value of the difference (ΔCT) and artifacts index (AI) were adopted in this study for the quantitative assessment of metal artifacts. The paper reports that the SMAR algorithm significantly improved the image quality and reduced the metal artifacts in patients with hip arthroplasty.
+
+- **Image quality assessment via multiple features**⁴: This paper proposes a novel no-reference IQA method that is based on multiple features. For each image, the paper extracts natural sense statistic feature, global structural feature, and local structural feature, respectively. Then, the paper uses a support vector machine (SVM) to combine these features and predict the image quality score. The paper compares the proposed method with several state-of-the-art IQA methods on four benchmark databases: LIVE, CSIQ, TID2013, and LIVE Multiply Distorted. The paper demonstrates that the proposed method achieves better performance than the existing methods in terms of correlation coefficients and consistency.
 
 Source: Conversation with Bing, 30/1/2024
-(1) Image Quality Assessment : BRISQUE | LearnOpenCV. https://learnopencv.com/image-quality-assessment-brisque/.
-(2) Blind/Referenceless Image Spatial Quality Evaluator (BRISQUE) no .... https://www.mathworks.com/help/images/ref/brisque.html.
-(3) OpenCV: cv::quality::QualityBRISQUE Class Reference. https://docs.opencv.org/4.x/d8/d99/classcv_1_1quality_1_1QualityBRISQUE.html.
-(4) Laboratory for Image & Video Engineering - University of Texas at Austin. https://live.ece.utexas.edu/research/Quality/nrqa.htm.
-(5) IEEE TRANSACTIONS ON IMAGE PROCESSING, VOL. 21, NO. 12, DECEMBER 2012 .... http://live.ece.utexas.edu/publications/2012/TIP%20BRISQUE.pdf.
-(6) What’s The BRISQUE Score Of A Photo And How To Obtain It ... - Medium. https://medium.com/@aleb/whats-the-brisque-score-of-a-photo-and-how-to-obtain-it-with-an-api-228199ab6d07.
-(7) No-Reference Image Quality Assessment in the Spatial Domain. http://live.ece.utexas.edu/research/quality/brisque_journal.pdf.
-(8) No-Reference Image Quality Assessment in the Spatial Domain. https://paperswithcode.com/paper/no-reference-image-quality-assessment-in-the.
-(9) No-reference image quality assessment in the spatial domain.. https://europepmc.org/article/MED/22910118.
-(10) undefined. https://en.wikipedia.org/wiki/Scene_statistics%29.
-(11) undefined. https://en.wikipedia.org/wiki/Scene.
+(1) Image Data Assessment Approach for Deep Learning-Based Metal Surface .... https://www.researchgate.net/profile/Hsien-I-Lin/publication/350336286_Image_Data_Assessment_Approach_for_Deep_Learning-Based_Metal_Surface_Defect-Detection_Systems/links/606d162f299bf13f5d5f95b4/Image-Data-Assessment-Approach-for-Deep-Learning-Based-Metal-Surface-Defect-Detection-Systems.pdf.
+(2) Metals | Free Full-Text | Deep Learning Approaches to Image Texture .... https://www.mdpi.com/2075-4701/12/2/355.
+(3) Metallographic Image Analysis for Quality Assurance of ... - Springer. https://link.springer.com/chapter/10.1007/978-981-19-4364-5_80.
+(4) Evaluation of the quality of CT images acquired with smart metal .... https://www.degruyter.com/document/doi/10.1515/biol-2018-0021/html.
+(5) Image quality assessment via multiple features - Springer. https://link.springer.com/article/10.1007/s11042-021-11788-x.
+(6) Image Quality Assessment | Papers With Code. https://paperswithcode.com/task/image-quality-assessment.
+(7) [2110.09699] Image Quality Assessment in the Modern Age - arXiv.org. https://arxiv.org/abs/2110.09699.
+(8) undefined. https://doi.org/10.3390/met12020355.
