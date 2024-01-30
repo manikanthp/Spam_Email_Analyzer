@@ -1,11 +1,37 @@
-**Short Notes on Research Topics**
+**Slide 1: Introduction**
+- Topic: Image Quality Assessment (IQA)
+- Objective: Understand the current research and available models for IQA
 
-- **Image Data Assessment Approach for Deep Learning-Based Metal Surface Defect-Detection Systems**⁵: This paper introduces a new score to evaluate the quality of training images for metal surface defect detection using deep learning models. The score considers defect visibility, visibility distribution, and overexposure. The paper shows that the score is more related to the detection performance than other IQA methods.
+**Slide 2: Research Papers**
+- "Image Quality Assessment in the Modern Age" by Kede Ma, Yuming Fang⁵
+- "PSNR vs SSIM: imperceptibility quality assessment for image steganography"⁶
+- "Image Quality Assessment: A Review to Full Reference Indexes"⁸
+- "Image Quality Assessment and Video Quality Assessment"⁹
 
-- **Deep Learning Approaches to Image Texture Analysis in Material Processing**⁶: This paper compares different methods for image texture analysis in material processing, such as GLCM, LBP, textons, and transfer learning with CNNs. The paper uses simulated and real-world data of ultrahigh carbon steel. The paper finds that transfer learning with CNNs, especially GoogLeNet and MobileNetV2, achieves the best results.
+**Slide 3: Key Findings from Research**
+- The Western concept of nationalism disrupted the Ottoman Empire's traditional millet system¹.
+- PSNR and SSIM are widely used in IQA, especially in steganography⁶.
+- The rise of deep learning-based methods for non-reference IQA⁹.
 
-- **Metallographic Image Analysis for Quality Assurance of Metals: A Review**¹: This paper reviews the existing methods and challenges of metallographic image analysis, which is important for studying the properties and quality of metallic materials. The paper discusses image processing techniques for grain size measurement, and future directions for metallographic image analysis, such as ultramicroscopy and artificial intelligence.
+**Slide 4: GitHub Repositories**
+- "idealo/image-quality-assessment": Implementation of an aesthetic and technical image quality model based on Google's research paper "NIMA: Neural Image Assessment"³.
+- "chaofengc/IQA-PyTorch": PyTorch Toolbox for IQA, including LPIPS, FID, NIQE, NRQM(Ma), MUSIQ, NIMA, DBCNN, WaDIQaM, BRISQUE, PI and more¹.
+- "chaofengc/Awesome-Image-Quality-Assessment": A comprehensive collection of IQA papers, datasets, and codes⁴.
 
-- **Evaluation of the quality of CT images acquired with smart metal artifact reduction (SMAR) algorithm in patients with hip arthroplasty**⁷: This paper evaluates the SMAR algorithm, which is designed to reduce metal artifacts in CT images of patients with hip arthroplasty. The paper uses subjective and objective methods to measure the image quality and the artifact reduction. The paper reports that the SMAR algorithm improves the image quality and reduces the artifacts significantly.
+**Slide 5: Conclusion**
+- Image Quality Assessment is a vibrant field with ongoing research.
+- Various models are available on GitHub for further exploration and fine-tuning on custom data.
 
-- **Image quality assessment via multiple features**⁴: This paper proposes a new no-reference IQA method that uses multiple features, such as natural sense statistic feature, global structural feature, and local structural feature. The paper uses an SVM to combine these features and predict the image quality score. The paper compares the proposed method with other IQA methods on four databases and shows that the proposed method performs better.
+Please note that I can provide the content for the slides, but I'm unable to create the actual PowerPoint slides. You can use the provided content to create the slides.
+
+Source: Conversation with Bing, 30/1/2024
+(1) [2110.09699] Image Quality Assessment in the Modern Age - arXiv.org. https://arxiv.org/abs/2110.09699.
+(2) PSNR vs SSIM: imperceptibility quality assessment for image .... https://link.springer.com/article/10.1007/s11042-020-10035-z.
+(3) Image Quality Assessment: A Review to Full Reference Indexes. https://link.springer.com/chapter/10.1007/978-981-13-2685-1_27.
+(4) Abstract arXiv:2109.00347v2 [eess.IV] 11 Jan 2022. https://arxiv.org/pdf/2109.00347.pdf.
+(5) image-quality-assessment · GitHub Topics · GitHub. https://github.com/topics/image-quality-assessment.
+(6) GitHub - idealo/image-quality-assessment: Convolutional Neural Networks .... https://github.com/idealo/image-quality-assessment.
+(7) Awesome Image Quality Assessment (IQA) - GitHub. https://github.com/chaofengc/Awesome-Image-Quality-Assessment.
+(8) image-quality-assessment · GitHub Topics · GitHub. https://github.com/topics/image-quality-assessment?o=desc&s=updated.
+(9) Image Quality Assessment | Papers With Code. https://paperswithcode.com/task/image-quality-assessment.
+(10) undefined. https://doi.org/10.48550/arXiv.2110.09699.
