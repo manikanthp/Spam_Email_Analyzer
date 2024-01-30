@@ -1,3 +1,65 @@
-Efficient Risk Profiling: The platform can automatically process and compare financial statements, regulatory filings, and market trends from diverse sources. This enables banks to create more comprehensive risk profiles for clients, investments, and portfolios.
+**No-Reference Image Quality Assessment Using BRISQUE**
 
-Early Warning System: LLM-driven analysis can identify potential risks and anomalies in real-time, providing an early warning system for financial institutions. This proactive approach allows for timely adjustments to investment strategies and risk mitigation measures.
+Image quality assessment (IQA) is the task of evaluating the perceptual quality of an image. There are different types of IQA methods, depending on whether they require a reference image or not. Full-reference IQA methods compare a distorted image with a pristine version of the same image, while reduced-reference IQA methods use some information extracted from the reference image. No-reference IQA methods, also known as blind or referenceless IQA methods, do not have any access to the reference image and only rely on the distorted image itself.
+
+One of the most popular and effective no-reference IQA methods is BRISQUE, which stands for Blind/Referenceless Image Spatial Quality Evaluator. BRISQUE was proposed by Mittal et al. in 2012¹ and won the first place in the LIVE Challenge on Image Quality Assessment². BRISQUE is based on the assumption that natural images have certain statistical properties that are altered by distortions such as noise, blur, compression artifacts, etc. Therefore, by measuring the deviation of these properties from their natural values, BRISQUE can estimate the quality of an image.
+
+The main steps of the BRISQUE algorithm are as follows:
+
+1. Convert the input image to grayscale and apply a 2D discrete cosine transform (DCT) to obtain the luminance coefficients.
+2. Divide the image into non-overlapping blocks of size 32x32 pixels and compute the mean and standard deviation of the luminance coefficients in each block.
+3. Apply a pointwise divisive normalization to each block using the mean and standard deviation values. This step aims to remove the dependencies between neighboring pixels and enhance the local features.
+4. Compute the asymmetric generalized Gaussian distribution (AGGD) parameters of the normalized coefficients and their pairwise products along the horizontal, vertical, and diagonal directions. These parameters capture the heavy-tailed nature of the natural image statistics and their variations due to distortions.
+5. Concatenate the AGGD parameters of all blocks to form a 36-dimensional feature vector that represents the image.
+6. Use a support vector regression (SVR) model trained on a large database of images with human opinion scores to map the feature vector to a quality score. The quality score is a scalar value that ranges from 0 to 100, where a higher value indicates a better quality.
+
+The following figure illustrates the BRISQUE algorithm:
+
+```python
+# Pseudocode for BRISQUE algorithm
+def brisque(image):
+  # Convert image to grayscale
+  image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+  # Apply 2D DCT
+  image = cv2.dct(image)
+  # Initialize feature vector
+  features = []
+  # Loop over non-overlapping blocks
+  for block in image.split(32, 32):
+    # Compute mean and standard deviation of luminance coefficients
+    mean = block.mean()
+    std = block.std()
+    # Apply pointwise divisive normalization
+    block = (block - mean) / (std + 1e-6)
+    # Compute AGGD parameters of normalized coefficients
+    alpha, beta, gamma = fit_aggd(block)
+    # Compute AGGD parameters of pairwise products
+    alpha_h, beta_h, gamma_h = fit_aggd(block * block.shift(1, 0)) # horizontal
+    alpha_v, beta_v, gamma_v = fit_aggd(block * block.shift(0, 1)) # vertical
+    alpha_d, beta_d, gamma_d = fit_aggd(block * block.shift(1, 1)) # diagonal
+    # Append AGGD parameters to feature vector
+    features.extend([alpha, beta, gamma, alpha_h, beta_h, gamma_h, alpha_v, beta_v, gamma_v, alpha_d, beta_d, gamma_d])
+  # Convert feature vector to numpy array
+  features = np.array(features)
+  # Load pre-trained SVR model
+  model = load_model("brisque_svr_model.pkl")
+  # Predict quality score using SVR model
+  score = model.predict(features)
+  # Return quality score
+  return score
+```
+
+The BRISQUE algorithm is a simple yet powerful method for no-reference image quality assessment. It does not require any distortion-specific features or prior knowledge of the reference image. It can handle a wide range of distortions and achieve high correlation with human perception. It is also computationally efficient and can be easily implemented using OpenCV and scikit-learn libraries. BRISQUE is a useful tool for applications such as image compression, enhancement, restoration, and retrieval.
+
+Source: Conversation with Bing, 30/1/2024
+(1) Image Quality Assessment : BRISQUE | LearnOpenCV. https://learnopencv.com/image-quality-assessment-brisque/.
+(2) Blind/Referenceless Image Spatial Quality Evaluator (BRISQUE) no .... https://www.mathworks.com/help/images/ref/brisque.html.
+(3) OpenCV: cv::quality::QualityBRISQUE Class Reference. https://docs.opencv.org/4.x/d8/d99/classcv_1_1quality_1_1QualityBRISQUE.html.
+(4) Laboratory for Image & Video Engineering - University of Texas at Austin. https://live.ece.utexas.edu/research/Quality/nrqa.htm.
+(5) IEEE TRANSACTIONS ON IMAGE PROCESSING, VOL. 21, NO. 12, DECEMBER 2012 .... http://live.ece.utexas.edu/publications/2012/TIP%20BRISQUE.pdf.
+(6) What’s The BRISQUE Score Of A Photo And How To Obtain It ... - Medium. https://medium.com/@aleb/whats-the-brisque-score-of-a-photo-and-how-to-obtain-it-with-an-api-228199ab6d07.
+(7) No-Reference Image Quality Assessment in the Spatial Domain. http://live.ece.utexas.edu/research/quality/brisque_journal.pdf.
+(8) No-Reference Image Quality Assessment in the Spatial Domain. https://paperswithcode.com/paper/no-reference-image-quality-assessment-in-the.
+(9) No-reference image quality assessment in the spatial domain.. https://europepmc.org/article/MED/22910118.
+(10) undefined. https://en.wikipedia.org/wiki/Scene_statistics%29.
+(11) undefined. https://en.wikipedia.org/wiki/Scene.
