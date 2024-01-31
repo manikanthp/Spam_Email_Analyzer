@@ -1,37 +1,31 @@
-**Slide 1: Introduction**
-- Topic: Image Quality Assessment (IQA)
-- Objective: Understand the current research and available models for IQA
+import cv2
+import numpy as np
 
-**Slide 2: Research Papers**
-- "Image Quality Assessment in the Modern Age" by Kede Ma, Yuming Fang⁵
-- "PSNR vs SSIM: imperceptibility quality assessment for image steganography"⁶
-- "Image Quality Assessment: A Review to Full Reference Indexes"⁸
-- "Image Quality Assessment and Video Quality Assessment"⁹
+def classify_intensity_variation(image_path):
+    # Load the image
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
-**Slide 3: Key Findings from Research**
-- The Western concept of nationalism disrupted the Ottoman Empire's traditional millet system¹.
-- PSNR and SSIM are widely used in IQA, especially in steganography⁶.
-- The rise of deep learning-based methods for non-reference IQA⁹.
+    # Get the image dimensions
+    height, width = img.shape
 
-**Slide 4: GitHub Repositories**
-- "idealo/image-quality-assessment": Implementation of an aesthetic and technical image quality model based on Google's research paper "NIMA: Neural Image Assessment"³.
-- "chaofengc/IQA-PyTorch": PyTorch Toolbox for IQA, including LPIPS, FID, NIQE, NRQM(Ma), MUSIQ, NIMA, DBCNN, WaDIQaM, BRISQUE, PI and more¹.
-- "chaofengc/Awesome-Image-Quality-Assessment": A comprehensive collection of IQA papers, datasets, and codes⁴.
+    # Split the image into top and bottom halves
+    top_half = img[:height//2, :]
+    bottom_half = img[height//2:, :]
 
-**Slide 5: Conclusion**
-- Image Quality Assessment is a vibrant field with ongoing research.
-- Various models are available on GitHub for further exploration and fine-tuning on custom data.
+    # Calculate the mean intensity for each half
+    mean_intensity_top = np.mean(top_half)
+    mean_intensity_bottom = np.mean(bottom_half)
 
-Please note that I can provide the content for the slides, but I'm unable to create the actual PowerPoint slides. You can use the provided content to create the slides.
+    # Set a threshold for intensity difference
+    intensity_threshold = 20
 
-Source: Conversation with Bing, 30/1/2024
-(1) [2110.09699] Image Quality Assessment in the Modern Age - arXiv.org. https://arxiv.org/abs/2110.09699.
-(2) PSNR vs SSIM: imperceptibility quality assessment for image .... https://link.springer.com/article/10.1007/s11042-020-10035-z.
-(3) Image Quality Assessment: A Review to Full Reference Indexes. https://link.springer.com/chapter/10.1007/978-981-13-2685-1_27.
-(4) Abstract arXiv:2109.00347v2 [eess.IV] 11 Jan 2022. https://arxiv.org/pdf/2109.00347.pdf.
-(5) image-quality-assessment · GitHub Topics · GitHub. https://github.com/topics/image-quality-assessment.
-(6) GitHub - idealo/image-quality-assessment: Convolutional Neural Networks .... https://github.com/idealo/image-quality-assessment.
-(7) Awesome Image Quality Assessment (IQA) - GitHub. https://github.com/chaofengc/Awesome-Image-Quality-Assessment.
-(8) image-quality-assessment · GitHub Topics · GitHub. https://github.com/topics/image-quality-assessment?o=desc&s=updated.
-(9) Image Quality Assessment | Papers With Code. https://paperswithcode.com/task/image-quality-assessment.
-(10) undefined. https://doi.org/10.48550/arXiv.2110.09699.
+    # Classify based on intensity difference
+    if abs(mean_intensity_top - mean_intensity_bottom) > intensity_threshold:
+        return "Top part has different intensity"
+    else:
+        return "Bottom part has different intensity"
+
+# Example usage
+image_path = "path/to/your/image.jpg"
+result = classify_intensity_variation(image_path)
+print(result)
