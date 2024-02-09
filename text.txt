@@ -2,42 +2,62 @@ import cv2
 import numpy as np
 
 # Load the image
-image = cv2.imread("En_Poster_Analysis Guide.jpg")
-
-# Convert the image to grayscale
+image = cv2.imread('your_image_path.jpg')
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# Apply adaptive thresholding to get a binary image
-thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
+# Apply GaussianBlur to reduce noise and improve line detection
+blur = cv2.GaussianBlur(gray, (5, 5), 0)
 
-# Find contours in the binary image
-contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+# Use the Canny edge detector to find edges in the image
+edges = cv2.Canny(blur, 50, 150)
 
-# Initialize variables to count bearings and store bounding boxes
-num_bearings = 0
-bounding_boxes = []
+# Specify the region of interest (ROI) for detecting horizontal lines
+roi_height = image.shape[0] // 2  # Adjust the height of the ROI as needed
+roi = edges[roi_height:, :]
 
-# Loop through the contours
-for cnt in contours:
-  # Calculate the area and perimeter of the contour
-  area = cv2.contourArea(cnt)
-  perimeter = cv2.arcLength(cnt, True)
+# Use the Hough Line Transform to detect lines in the ROI
+lines = cv2.HoughLines(roi, 1, np.pi / 180, 100)
 
-  # Check if the contour is circular
-  if cv2.isContourConvex(cnt) and (4 * np.pi * area / (perimeter * perimeter)) > 0.7:
-    # Get the bounding box of the contour
-    x, y, w, h = cv2.boundingRect(cnt)
+# Lists to store coordinates of top and bottom lines
+top_lines = []
+bottom_lines = []
 
-    # Check if the bounding box is within the image dimensions
-    if x >= 0 and y >= 0 and x + w < image.shape[1] and y + h < image.shape[0]:
-      # Increment the number of bearings and store the bounding box
-      num_bearings += 1
-      bounding_boxes.append((x, y, w, h))
+# Filter and draw only horizontal lines within the ROI, ignoring close to top or bottom borders
+for line in lines:
+    rho, theta = line[0]
+    angle = np.degrees(theta)
+    if 80 <= angle <= 100:  # Adjust this range based on the angle of horizontal lines
+        a = np.cos(theta)
+        b = np.sin(theta)
+        x0 = a * rho
+        y0 = (b * rho) + roi_height  # Adjust y0 to account for the ROI offset
+        x1 = int(x0 + 1000 * (-b))
+        y1 = int(y0 + 1000 * (a))
+        x2 = int(x0 - 1000 * (-b))
+        y2 = int(y0 - 1000 * (a))
 
-      # Draw the bounding box on the image
-      cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        # Check if the line is not too close to the top or bottom borders
+        if y1 > 10 and y2 > 10 and y1 < (image.shape[0] - 10) and y2 < (image.shape[0] - 10):
+            midpoint_y = (y1 + y2) // 2
+            if midpoint_y < image.shape[0] // 2:
+                top_lines.append(((x1, y1), (x2, y2)))
+            else:
+                bottom_lines.append(((x1, y1), (x2, y2)))
 
-# Print the number of bearings and display the image
-print(f"Number of bearings: {num_bearings}")
-cv2.imshow("Image", image)
+# Display the result and print the classification
+if len(top_lines) > len(bottom_lines):
+    print("Lines are more on top of the image.")
+else:
+    print("Lines are more on the bottom of the image.")
+
+# Draw lines on the original image
+for line in top_lines:
+    cv2.line(image, line[0], line[1], (0, 255, 0), 2)
+
+for line in bottom_lines:
+    cv2.line(image, line[0], line[1], (0, 0, 255), 2)
+
+# Display the result
+cv2.imshow('Detected Horizontal Lines', image)
 cv2.waitKey(0)
+cv2.destroyAllWindows()
