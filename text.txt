@@ -2,36 +2,42 @@ import cv2
 import numpy as np
 
 # Load the image
-image = cv2.imread('your_image_path.jpg')
+image = cv2.imread("En_Poster_Analysis Guide.jpg")
+
+# Convert the image to grayscale
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# Apply GaussianBlur to reduce noise and improve line detection
-blur = cv2.GaussianBlur(gray, (5, 5), 0)
+# Apply adaptive thresholding to get a binary image
+thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
 
-# Use the Canny edge detector to find edges in the image
-edges = cv2.Canny(blur, 50, 150)
+# Find contours in the binary image
+contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-# Use the Hough Line Transform to detect lines
-# Parameters: image, rho, theta, threshold
-# rho is the resolution of the accumulator in pixels
-# theta is the angle resolution of the accumulator in radians
-# threshold is the minimum number of intersections to detect a line
-lines = cv2.HoughLines(edges, 1, np.pi / 180, 100)
+# Initialize variables to count bearings and store bounding boxes
+num_bearings = 0
+bounding_boxes = []
 
-# Draw lines on the original image
-for line in lines:
-    rho, theta = line[0]
-    a = np.cos(theta)
-    b = np.sin(theta)
-    x0 = a * rho
-    y0 = b * rho
-    x1 = int(x0 + 1000 * (-b))
-    y1 = int(y0 + 1000 * (a))
-    x2 = int(x0 - 1000 * (-b))
-    y2 = int(y0 - 1000 * (a))
-    cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+# Loop through the contours
+for cnt in contours:
+  # Calculate the area and perimeter of the contour
+  area = cv2.contourArea(cnt)
+  perimeter = cv2.arcLength(cnt, True)
 
-# Display the result
-cv2.imshow('Detected Lines', image)
+  # Check if the contour is circular
+  if cv2.isContourConvex(cnt) and (4 * np.pi * area / (perimeter * perimeter)) > 0.7:
+    # Get the bounding box of the contour
+    x, y, w, h = cv2.boundingRect(cnt)
+
+    # Check if the bounding box is within the image dimensions
+    if x >= 0 and y >= 0 and x + w < image.shape[1] and y + h < image.shape[0]:
+      # Increment the number of bearings and store the bounding box
+      num_bearings += 1
+      bounding_boxes.append((x, y, w, h))
+
+      # Draw the bounding box on the image
+      cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+# Print the number of bearings and display the image
+print(f"Number of bearings: {num_bearings}")
+cv2.imshow("Image", image)
 cv2.waitKey(0)
-cv2.destroyAllWindows()
