@@ -1,63 +1,16 @@
-import cv2
-import numpy as np
+Successfully completed the "TC review" use case project in HEIC format. Delivered the project on time and in the expected JSON output format, and was recognized with a Super Crew Award for my contribution
 
-# Load the image
-image = cv2.imread('your_image_path.jpg')
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+Successfully completed the "DCR Usecase" for HEIC clients by implementing a custom text extraction algorithm to handle challenging conditions. Delivered the project on time and met all User Acceptance Testing (UAT) criteria, exceeding client expectations.
 
-# Apply GaussianBlur to reduce noise and improve line detection
-blur = cv2.GaussianBlur(gray, (5, 5), 0)
+Led the successful completion of the "Filled Protocol" use case for HEIC clients. I began by building a proof-of-concept (POC) to demonstrate feasibility. I then oversaw the entire development and deployment process, ensuring the project met all requirements even in challenging conditions. Client feedback during User Acceptance Testing (UAT) was exceptional, highlighting the successful project outcome. This achievement earned me both a Star Award and recognition from Vice President Manoj.
 
-# Use the Canny edge detector to find edges in the image
-edges = cv2.Canny(blur, 50, 150)
+Successfully delivered a demonstration of the Exxon Mobil NLP use case to clients on time.
 
-# Specify the region of interest (ROI) for detecting horizontal lines
-roi_height = image.shape[0] // 2  # Adjust the height of the ROI as needed
-roi = edges[roi_height:, :]
+Proactively supported the team by creating presentations for POCs and independently conducting extensive research on topics shared by leaders and colleagues. This dedication and initiative led to two Star Award nominations.
 
-# Use the Hough Line Transform to detect lines in the ROI
-lines = cv2.HoughLines(roi, 1, np.pi / 180, 100)
+Led an internal knowledge-sharing session by demonstrating real-world project workflows. This aimed to enhance team knowledge and foster greater collaboration, ultimately leading to a more knowledgeable and efficient team
 
-# Lists to store coordinates of top and bottom lines
-top_lines = []
-bottom_lines = []
+Troubleshoot and implement changes to deployed projects in response to front-end team requests and evolving business requirements.
+Utilize technical expertise to address issues and deploy updates for deployed projects, upholding alignment with business needs and front-end feedback.
 
-# Filter and draw only horizontal lines within the ROI, ignoring close to top or bottom borders
-for line in lines:
-    rho, theta = line[0]
-    angle = np.degrees(theta)
-    if 80 <= angle <= 100:  # Adjust this range based on the angle of horizontal lines
-        a = np.cos(theta)
-        b = np.sin(theta)
-        x0 = a * rho
-        y0 = (b * rho) + roi_height  # Adjust y0 to account for the ROI offset
-        x1 = int(x0 + 1000 * (-b))
-        y1 = int(y0 + 1000 * (a))
-        x2 = int(x0 - 1000 * (-b))
-        y2 = int(y0 - 1000 * (a))
-
-        # Check if the line is not too close to the top or bottom borders
-        if y1 > 10 and y2 > 10 and y1 < (image.shape[0] - 10) and y2 < (image.shape[0] - 10):
-            midpoint_y = (y1 + y2) // 2
-            if midpoint_y < image.shape[0] // 2:
-                top_lines.append(((x1, y1), (x2, y2)))
-            else:
-                bottom_lines.append(((x1, y1), (x2, y2)))
-
-# Display the result and print the classification
-if len(top_lines) > len(bottom_lines):
-    print("Lines are more on top of the image.")
-else:
-    print("Lines are more on the bottom of the image.")
-
-# Draw lines on the original image
-for line in top_lines:
-    cv2.line(image, line[0], line[1], (0, 255, 0), 2)
-
-for line in bottom_lines:
-    cv2.line(image, line[0], line[1], (0, 0, 255), 2)
-
-# Display the result
-cv2.imshow('Detected Horizontal Lines', image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+Communicated my planned leave well in advance to ensure a smooth handover and minimize impact on the team.
