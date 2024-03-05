@@ -1,16 +1,8 @@
-Successfully completed the "TC review" use case project in HEIC format. Delivered the project on time and in the expected JSON output format, and was recognized with a Super Crew Award for my contribution
-
-Successfully completed the "DCR Usecase" for HEIC clients by implementing a custom text extraction algorithm to handle challenging conditions. Delivered the project on time and met all User Acceptance Testing (UAT) criteria, exceeding client expectations.
-
-Led the successful completion of the "Filled Protocol" use case for HEIC clients. I began by building a proof-of-concept (POC) to demonstrate feasibility. I then oversaw the entire development and deployment process, ensuring the project met all requirements even in challenging conditions. Client feedback during User Acceptance Testing (UAT) was exceptional, highlighting the successful project outcome. This achievement earned me both a Star Award and recognition from Vice President Manoj.
-
-Successfully delivered a demonstration of the Exxon Mobil NLP use case to clients on time.
-
-Proactively supported the team by creating presentations for POCs and independently conducting extensive research on topics shared by leaders and colleagues. This dedication and initiative led to two Star Award nominations.
-
-Led an internal knowledge-sharing session by demonstrating real-world project workflows. This aimed to enhance team knowledge and foster greater collaboration, ultimately leading to a more knowledgeable and efficient team
-
-Troubleshoot and implement changes to deployed projects in response to front-end team requests and evolving business requirements.
-Utilize technical expertise to address issues and deploy updates for deployed projects, upholding alignment with business needs and front-end feedback.
-
-Communicated my planned leave well in advance to ensure a smooth handover and minimize impact on the team.
+NLP bridges the communication gap between humans and machines.
+It unlocks a vast array of applications that transform various industries.
+A few examples include:
+Machine translation: Breaking down language barriers for seamless communication.
+Chatbots: Providing intelligent customer service and support.
+Sentiment analysis: Understanding public opinion and brand perception.
+Text summarization: Condensing information for efficient content consumption.
+Content generation: Creating human-quality text formats like articles, poems, and code.
