@@ -1,18 +1,20 @@
 $imagePath = "C:\path\to\your\image.jpg"
 
-# Get WMI object for the image
-$wmiObject = Get-WmiObject -Class Win32_SystemFile -Filter "Path='$imagePath'"
+# Get WMI object for the image (requires admin rights)
+try {
+  $wmiObject = Get-WmiObject -Class Win32_SystemFile -Filter "Path='$imagePath'"
+} catch {
+  Write-Error "Error retrieving image properties. Run script with Administrator privileges."
+  exit
+}
 
 # Extract properties
 $properties = @{
   "Width" = $wmiObject.DriveBytes
   "Height" = $wmiObject.FileSize
-  "Color Depth" = ($wmiObject.FileSize / ($wmiObject.Width * $wmiObject.Height)) * 8
+  "Color Depth" = ($wmiObject.FileSize / ($wmiObject.DriveBytes * $wmiObject.FileSize)) * 8  # Estimate based on file size and dimensions
+  "Camera Model" = $wmiObject.Manufacturer  # Might not be available in all images
 }
 
-# Display properties with error handling (admin rights needed)
-try {
-  $properties | Format-Table -Property Name, Value
-} catch {
-  Write-Error "Error retrieving image properties. Run script with Administrator privileges."
-}
+# Display properties
+$properties | Format-Table -Property Name, Value
