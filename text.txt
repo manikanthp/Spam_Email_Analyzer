@@ -1,10 +1,12 @@
-3. app.py:
+Sure, here's a simple example of a Flask app with a navigation bar/sidebar for navigating to different pages:
 
-Python
+python
+Copy code
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
+# Define routes for different pages
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -13,85 +15,85 @@ def home():
 def about():
     return render_template('about.html')
 
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
-Use code with caution.
-4. templates/base.html:
+Now, let's create templates for these pages. Inside a folder named templates, create three HTML files: home.html, about.html, and contact.html.
 
-This template defines the overall layout and includes placeholders for content and navigation elements:
+home.html:
 
-HTML
+html
+Copy code
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Flask Navigation App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
 </head>
 <body>
-    <header>
-        <h1>Flask Navigation App</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('about') }}">About</a></li>
-                </ul>
-        </nav>
-    </header>
-
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-
-    <aside>
-        <h2>Navigation</h2>
+    <nav>
         <ul>
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('about') }}">About</a></li>
-            </ul>
-    </aside>
-
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+    <h1>Welcome to the Home Page</h1>
 </body>
 </html>
-Use code with caution.
-5. templates/home.html and about.html:
+about.html:
 
-These templates define the content specific to each page:
-
-HTML
-{% extends 'base.html' %}
-
-{% block content %}
-    <h1>Welcome to the Home Page!</h1>
-    <p>This is the content for the home page.</p>
-{% endblock %}
-
-{% extends 'base.html' %}
-
-{% block content %}
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
     <h1>About Us</h1>
-    <p>This is the content for the About page.</p>
-{% endblock %}
-Use code with caution.
-6. Optional: styles.css (in static folder):
+    <p>This is the about page.</p>
+</body>
+</html>
+contact.html:
 
-You can create a styles.css file in the static folder to style your navigation bar and sidebar as desired. Consider using a CSS framework like Bootstrap to simplify the process.
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+    <h1>Contact Us</h1>
+    <p>Contact us at example@example.com</p>
+</body>
+</html>
+These HTML templates create a navigation bar at the top of each page with links to the Home, About, and Contact pages. When you run the Flask app and navigate to these pages, you'll see the corresponding content.
 
-7. Running the App:
 
-Activate your virtual environment (if applicable).
 
-Run the app:
 
-Bash
-python app.py
-Use code with caution.
-Visit http://127.0.0.1:5000/ in your web browser to see the app with both navigation bar and sidebar.
 
-Enhancements:
-
-Flexibility: The base template allows you to easily add more navigation links and adjust the layout as needed.
-CSS Styling: While basic HTML is used here, consider using CSS frameworks for easier styling of navigation elements.
-Scalability: The approach using templates makes it easy to maintain and scale the application with growing content.
-Sources
-stackoverflow.com/questions/47104359/flask-jinja2-exceptions-templatenotfound-error
