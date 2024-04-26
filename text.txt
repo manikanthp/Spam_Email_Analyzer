@@ -1,99 +1,52 @@
-Sure, here's a simple example of a Flask app with a navigation bar/sidebar for navigating to different pages:
+import json
+import numpy as np
 
-python
-Copy code
-from flask import Flask, render_template
+def rotate_point(point, center, angle):
+    """Rotate a point around a center by a given angle."""
+    angle_rad = np.deg2rad(angle)
+    x, y = point
+    cx, cy = center
+    new_x = np.cos(angle_rad) * (x - cx) - np.sin(angle_rad) * (y - cy) + cx
+    new_y = np.sin(angle_rad) * (x - cx) + np.cos(angle_rad) * (y - cy) + cy
+    return new_x, new_y
 
-app = Flask(__name__)
+def rotate_polygon(polygon, center, angle):
+    """Rotate a polygon around a center by a given angle."""
+    return [rotate_point(point, center, angle) for point in polygon]
 
-# Define routes for different pages
-@app.route('/')
-def home():
-    return render_template('home.html')
+def rotate_json_data(json_data, image_width, image_height, angle):
+    """Rotate JSON labeled data for an image."""
+    # Calculate the center of the image
+    center = (image_width / 2, image_height / 2)
+    
+    # Rotate each polygon in the JSON data
+    for label, polygons in json_data.items():
+        for i, polygon in enumerate(polygons):
+            # Adjust polygon points to be relative to the center
+            relative_polygon = [(x - center[0], y - center[1]) for x, y in polygon]
+            # Rotate the polygon
+            rotated_polygon = rotate_polygon(relative_polygon, (0, 0), angle)
+            # Convert rotated polygon points to absolute coordinates
+            rotated_polygon = [(x + center[0], y + center[1]) for x, y in rotated_polygon]
+            # Update the JSON data with the rotated polygon
+            json_data[label][i] = rotated_polygon
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+    return json_data
 
-@app.route('/contact')
-def contact():
-    return render_template('contact.html')
+# Example usage
+json_data = {
+    "object1": [
+        [(100, 100), (200, 100), (200, 200), (100, 200)],
+        [(300, 300), (400, 300), (400, 400), (300, 400)]
+    ],
+    "object2": [
+        [(500, 500), (600, 500), (600, 600), (500, 600)]
+    ]
+}
 
-if __name__ == '__main__':
-    app.run(debug=True)
-Now, let's create templates for these pages. Inside a folder named templates, create three HTML files: home.html, about.html, and contact.html.
+image_width = 800
+image_height = 600
+rotation_angle = 90  # Clockwise rotation
 
-home.html:
-
-html
-Copy code
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-        </ul>
-    </nav>
-    <h1>Welcome to the Home Page</h1>
-</body>
-</html>
-about.html:
-
-html
-Copy code
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
-</head>
-<body>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-        </ul>
-    </nav>
-    <h1>About Us</h1>
-    <p>This is the about page.</p>
-</body>
-</html>
-contact.html:
-
-html
-Copy code
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact</title>
-</head>
-<body>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-        </ul>
-    </nav>
-    <h1>Contact Us</h1>
-    <p>Contact us at example@example.com</p>
-</body>
-</html>
-These HTML templates create a navigation bar at the top of each page with links to the Home, About, and Contact pages. When you run the Flask app and navigate to these pages, you'll see the corresponding content.
-
-
-
-
-
+rotated_json_data = rotate_json_data(json_data, image_width, image_height, rotation_angle)
+print(json.dumps(rotated_json_data, indent=2))
