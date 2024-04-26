@@ -1,52 +1,65 @@
-import json
+import cv2
 import numpy as np
 
-def rotate_point(point, center, angle):
-    """Rotate a point around a center by a given angle."""
-    angle_rad = np.deg2rad(angle)
+def rotate_point(point, center):
+    """Rotate a point around a center by 90 degrees clockwise."""
     x, y = point
     cx, cy = center
-    new_x = np.cos(angle_rad) * (x - cx) - np.sin(angle_rad) * (y - cy) + cx
-    new_y = np.sin(angle_rad) * (x - cx) + np.cos(angle_rad) * (y - cy) + cy
-    return new_x, new_y
+    new_x = cx - (y - cy)
+    new_y = cy + (x - cx)
+    return [new_x, new_y]
 
-def rotate_polygon(polygon, center, angle):
-    """Rotate a polygon around a center by a given angle."""
-    return [rotate_point(point, center, angle) for point in polygon]
+def rotate_polygon(polygon, center):
+    """Rotate a polygon around a center by 90 degrees clockwise."""
+    return [rotate_point(point, center) for point in polygon]
 
-def rotate_json_data(json_data, image_width, image_height, angle):
-    """Rotate JSON labeled data for an image."""
-    # Calculate the center of the image
-    center = (image_width / 2, image_height / 2)
-    
-    # Rotate each polygon in the JSON data
-    for label, polygons in json_data.items():
-        for i, polygon in enumerate(polygons):
-            # Adjust polygon points to be relative to the center
-            relative_polygon = [(x - center[0], y - center[1]) for x, y in polygon]
-            # Rotate the polygon
-            rotated_polygon = rotate_polygon(relative_polygon, (0, 0), angle)
-            # Convert rotated polygon points to absolute coordinates
-            rotated_polygon = [(x + center[0], y + center[1]) for x, y in rotated_polygon]
-            # Update the JSON data with the rotated polygon
-            json_data[label][i] = rotated_polygon
+def rotate_all_polygons(polygons, center):
+    """Rotate all polygons in a list around a center by 90 degrees clockwise."""
+    return [rotate_polygon(polygon["points"], center) for polygon in polygons]
 
-    return json_data
+def get_image_shapes_and_center(image_path):
+    """Load an image, get its dimensions, and calculate its center."""
+    image = cv2.imread(image_path)
+    image_height, image_width, _ = image.shape
+    image_center = [image_width / 2, image_height / 2]
+    return image_height, image_width, image_center
 
-# Example usage
+# Example JSON data
 json_data = {
-    "object1": [
-        [(100, 100), (200, 100), (200, 200), (100, 200)],
-        [(300, 300), (400, 300), (400, 400), (300, 400)]
-    ],
-    "object2": [
-        [(500, 500), (600, 500), (600, 600), (500, 600)]
+    "shapes": [
+        {
+            "label": "nowear",
+            "points": [
+                [541.9259259259259, 2210.148148148148],
+                [534.5185185185185, 2536.074074074074],
+                # More points...
+            ],
+            # Other properties...
+        },
+        {
+            "label": "nowear",
+            "points": [
+                [536.6521739130435, 1858.695652173913],
+                [541.0, 2184.782608695652],
+                # More points...
+            ],
+            # Other properties...
+        },
+        # More shapes...
     ]
 }
 
-image_width = 800
-image_height = 600
-rotation_angle = 90  # Clockwise rotation
+# Path to the image
+image_path = "path_to_your_image.jpg"
 
-rotated_json_data = rotate_json_data(json_data, image_width, image_height, rotation_angle)
-print(json.dumps(rotated_json_data, indent=2))
+# Get image dimensions and center
+image_height, image_width, image_center = get_image_shapes_and_center(image_path)
+
+# Rotate all polygons in the JSON data
+rotated_polygons = rotate_all_polygons(json_data["shapes"], image_center)
+
+# Replace the original polygon points with the rotated ones
+for i in range(len(json_data["shapes"])):
+    json_data["shapes"][i]["points"] = rotated_polygons[i]
+
+# Now json_data["shapes"] contains the rotated polygons
