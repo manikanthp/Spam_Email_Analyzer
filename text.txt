@@ -1,65 +1,36 @@
-import cv2
-import numpy as np
+import json
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
+from PIL import Image
 
-def rotate_point(point, center):
-    """Rotate a point around a center by 90 degrees clockwise."""
-    x, y = point
-    cx, cy = center
-    new_x = cx - (y - cy)
-    new_y = cy + (x - cx)
-    return [new_x, new_y]
+# Load JSON file containing segmentation points
+with open('segmentation.json', 'r') as f:
+    data = json.load(f)
 
-def rotate_polygon(polygon, center):
-    """Rotate a polygon around a center by 90 degrees clockwise."""
-    return [rotate_point(point, center) for point in polygon]
+# Load the image
+img = Image.open('image_path.jpg')
 
-def rotate_all_polygons(polygons, center):
-    """Rotate all polygons in a list around a center by 90 degrees clockwise."""
-    return [rotate_polygon(polygon["points"], center) for polygon in polygons]
+# Rotate the image by 90 degrees
+img_rotated = img.rotate(90, expand=True)
 
-def get_image_shapes_and_center(image_path):
-    """Load an image, get its dimensions, and calculate its center."""
-    image = cv2.imread(image_path)
-    image_height, image_width, _ = image.shape
-    image_center = [image_width / 2, image_height / 2]
-    return image_height, image_width, image_center
+# Get image size after rotation
+width, height = img_rotated.size
 
-# Example JSON data
-json_data = {
-    "shapes": [
-        {
-            "label": "nowear",
-            "points": [
-                [541.9259259259259, 2210.148148148148],
-                [534.5185185185185, 2536.074074074074],
-                # More points...
-            ],
-            # Other properties...
-        },
-        {
-            "label": "nowear",
-            "points": [
-                [536.6521739130435, 1858.695652173913],
-                [541.0, 2184.782608695652],
-                # More points...
-            ],
-            # Other properties...
-        },
-        # More shapes...
-    ]
-}
+# Plot the rotated image
+plt.imshow(img_rotated)
 
-# Path to the image
-image_path = "path_to_your_image.jpg"
+# Iterate through each shape in the JSON file
+for shape in data['shapes']:
+    label = shape['label']
+    points = shape['points']
 
-# Get image dimensions and center
-image_height, image_width, image_center = get_image_shapes_and_center(image_path)
+    # Rotate the points for the new image size
+    rotated_points = [(height - point[1], point[0]) for point in points]
 
-# Rotate all polygons in the JSON data
-rotated_polygons = rotate_all_polygons(json_data["shapes"], image_center)
+    # Plot rotated bounding box
+    poly = Polygon(rotated_points, edgecolor='r', facecolor='none', closed=True, linewidth=2)
+    plt.gca().add_patch(poly)
+    plt.text(rotated_points[0][0], rotated_points[0][1], label, color='r', fontsize=12, ha='center')
 
-# Replace the original polygon points with the rotated ones
-for i in range(len(json_data["shapes"])):
-    json_data["shapes"][i]["points"] = rotated_polygons[i]
-
-# Now json_data["shapes"] contains the rotated polygons
+plt.axis('off')  # turn off axis
+plt.show()
