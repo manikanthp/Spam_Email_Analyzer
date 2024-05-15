@@ -1,36 +1,18 @@
-import json
-import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
-from PIL import Image
+Introduction
+Amazon SageMaker is a fully managed service that provides every developer and data scientist with the ability to build, train, and deploy machine learning (ML) models quickly. It removes the heavy lifting from each step of the ML process to make it easier to develop high-quality models. With SageMaker, data scientists and developers can quickly build and train machine learning models, and then directly deploy them into a production-ready hosted environment.
 
-# Load JSON file containing segmentation points
-with open('segmentation.json', 'r') as f:
-    data = json.load(f)
+Key Features
+1. Data Labeling
+Amazon SageMaker provides built-in workflows for data labeling, which is essential for supervised learning tasks. It allows you to create custom labeling jobs or use built-in workflows for common labeling tasks.
 
-# Load the image
-img = Image.open('image_path.jpg')
+2. Model Training
+SageMaker provides a fully managed training environment with support for popular deep learning frameworks such as TensorFlow, PyTorch, Apache MXNet, and others. You can easily scale training jobs to use multiple instances, and leverage GPU instances for accelerated training.
 
-# Rotate the image by 90 degrees
-img_rotated = img.rotate(90, expand=True)
+3. Hyperparameter Optimization
+Automatically tune your model's hyperparameters to maximize performance with SageMaker's built-in hyperparameter optimization (HPO) functionality. This helps to streamline the model development process and achieve better results.
 
-# Get image size after rotation
-width, height = img_rotated.size
+4. Model Hosting
+Once your model is trained, SageMaker makes it easy to deploy it into a scalable and secure environment. You can deploy your models as real-time endpoints or as batch processing jobs.
 
-# Plot the rotated image
-plt.imshow(img_rotated)
-
-# Iterate through each shape in the JSON file
-for shape in data['shapes']:
-    label = shape['label']
-    points = shape['points']
-
-    # Rotate the points for the new image size
-    rotated_points = [(height - point[1], point[0]) for point in points]
-
-    # Plot rotated bounding box
-    poly = Polygon(rotated_points, edgecolor='r', facecolor='none', closed=True, linewidth=2)
-    plt.gca().add_patch(poly)
-    plt.text(rotated_points[0][0], rotated_points[0][1], label, color='r', fontsize=12, ha='center')
-
-plt.axis('off')  # turn off axis
-plt.show()
+5. Model Monitoring
+SageMaker provides built-in model monitoring capabilities to detect deviations in model quality and data quality. This helps to ensure that your deployed models continue to perform accurately over time.
