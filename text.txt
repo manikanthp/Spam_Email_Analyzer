@@ -1,18 +1,29 @@
-Introduction
-Amazon SageMaker is a fully managed service that provides every developer and data scientist with the ability to build, train, and deploy machine learning (ML) models quickly. It removes the heavy lifting from each step of the ML process to make it easier to develop high-quality models. With SageMaker, data scientists and developers can quickly build and train machine learning models, and then directly deploy them into a production-ready hosted environment.
+import os
+import json
 
-Key Features
-1. Data Labeling
-Amazon SageMaker provides built-in workflows for data labeling, which is essential for supervised learning tasks. It allows you to create custom labeling jobs or use built-in workflows for common labeling tasks.
+def modify_json_data(input_folder, output_folder):
+    # Create the output folder if it doesn't exist
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
 
-2. Model Training
-SageMaker provides a fully managed training environment with support for popular deep learning frameworks such as TensorFlow, PyTorch, Apache MXNet, and others. You can easily scale training jobs to use multiple instances, and leverage GPU instances for accelerated training.
+    # Iterate over all files in the input folder
+    for filename in os.listdir(input_folder):
+        if filename.endswith(".json"):
+            # Read the JSON file
+            with open(os.path.join(input_folder, filename), 'r') as file:
+                json_data = json.load(file)
 
-3. Hyperparameter Optimization
-Automatically tune your model's hyperparameters to maximize performance with SageMaker's built-in hyperparameter optimization (HPO) functionality. This helps to streamline the model development process and achieve better results.
+            # Modify the JSON data (Replace this with your own logic)
+            modified_json_data = {key: value.upper() if isinstance(value, str) else value for key, value in json_data.items()}
 
-4. Model Hosting
-Once your model is trained, SageMaker makes it easy to deploy it into a scalable and secure environment. You can deploy your models as real-time endpoints or as batch processing jobs.
+            # Write the modified JSON data to a new file in the output folder
+            output_filename = os.path.join(output_folder, filename)
+            with open(output_filename, 'w') as file:
+                json.dump(modified_json_data, file, indent=4)
 
-5. Model Monitoring
-SageMaker provides built-in model monitoring capabilities to detect deviations in model quality and data quality. This helps to ensure that your deployed models continue to perform accurately over time.
+            print(f"Modified JSON saved to: {output_filename}")
+
+# Example usage:
+input_folder = "/path/to/input/folder"
+output_folder = "/path/to/output/folder"
+modify_json_data(input_folder, output_folder)
