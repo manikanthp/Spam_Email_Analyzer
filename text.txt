@@ -1,15 +1,5 @@
-Certainly! Here’s the rephrased version:
+We are updating our process for assessing image quality, wear type, and repair instructions by integrating human review into the AI judgment workflow. 
 
----
+When a technician takes pictures using our AI mobile app, the images are sent for quality checks via the image advisory model. If the images do not meet the required quality standards, the model will notify the technician to retake the images, providing suggestions for improvement. Once satisfactory images are obtained, they are forwarded to the defect identification model, which classifies the wear type. 
 
-There are several challenges in the current process that can be significantly alleviated by implementing an AI model.
-
-Firstly, the total turnaround time is extended because the image quality checks are conducted manually by the Techline agent. If the images do not meet the required standards, the agent must communicate back to the technicians, requesting retakes. This back-and-forth process can be time-consuming and inefficient.
-
-Secondly, the Techline agent is responsible for manually assessing the images to determine the type of wear. This assessment requires the expertise of a Subject Matter Expert (SME) to accurately judge the condition and recommend the appropriate repair method. This reliance on manual evaluation by an SME further contributes to delays and potential inconsistencies in the assessment process.
-
-By leveraging an AI model, these challenges can be addressed more efficiently, reducing the turnaround time and ensuring more consistent and accurate evaluations.
-
----
-
-This rephrased version presents the information clearly and professionally in paragraph form.
+Based on the wear type identified, the system suggests appropriate repair methods for the most severe cases. These suggestions are then reviewed and approved by an HCC agent via the web app. Once approved, the process triggers the sending of emails and the ordering of parts, which are then shipped to the dealer. The technician completes the repairs using the provided parts.
