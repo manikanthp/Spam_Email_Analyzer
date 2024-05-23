@@ -1,5 +1,38 @@
-We are updating our process for assessing image quality, wear type, and repair instructions by integrating human review into the AI judgment workflow. 
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import os
 
-When a technician takes pictures using our AI mobile app, the images are sent for quality checks via the image advisory model. If the images do not meet the required quality standards, the model will notify the technician to retake the images, providing suggestions for improvement. Once satisfactory images are obtained, they are forwarded to the defect identification model, which classifies the wear type. 
+# Function to load images from a directory
+def load_images_from_folder(folder):
+    images = []
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder, filename))
+        if img is not None:
+            images.append(img)
+    return images
 
-Based on the wear type identified, the system suggests appropriate repair methods for the most severe cases. These suggestions are then reviewed and approved by an HCC agent via the web app. Once approved, the process triggers the sending of emails and the ordering of parts, which are then shipped to the dealer. The technician completes the repairs using the provided parts.
+# Function to plot histograms of images
+def plot_histograms(images):
+    for i, img in enumerate(images):
+        # Convert to grayscale
+        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        
+        # Compute histogram
+        hist = cv2.calcHist([gray_img], [0], None, [256], [0, 256])
+        
+        # Plot histogram
+        plt.plot(hist, label=f'Image {i+1}')
+    
+    plt.title('Grayscale Histogram')
+    plt.xlabel('Pixel Value')
+    plt.ylabel('Frequency')
+    plt.legend()
+    plt.show()
+
+# Load images
+folder_path = 'path_to_your_image_folder'  # Replace with the path to your image folder
+images = load_images_from_folder(folder_path)
+
+# Plot histograms
+plot_histograms(images)
