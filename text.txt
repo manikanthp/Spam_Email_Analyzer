@@ -1,17 +1,31 @@
-### Summary
+import os
+import shutil
 
-The problem of using histogram distribution for classifying images into six different categories is primarily due to the overlapping distribution patterns among the categories. A histogram represents the distribution of pixel intensities or other image features, and if multiple categories exhibit similar distributions, it becomes challenging to differentiate between them based on histograms alone. Specifically, in this scenario:
+# Define the paths
+input_base_path = 'crops'
+output_path = 'output'
 
-1. **Overlapping Distributions**: Three out of the six categories have the same distribution pattern. This means that their histograms are very similar or identical, making it impossible to distinguish them using histogram-based methods.
-2. **Limited Discriminative Power**: Even advanced statistical approaches cannot improve classification accuracy significantly when the underlying distributions are overlapping. Histograms do not capture complex features and patterns that might differentiate the categories beyond pixel intensity or basic feature distributions.
-3. **Only Two Distinguishable Categories**: Out of the six categories, only two have unique distribution patterns that can be clearly separated from the others using histograms. This further limits the effectiveness of histogram-based classification, as it can only reliably classify these two categories.
+# Create the output directory if it doesn't exist
+if not os.path.exists(output_path):
+    os.makedirs(output_path)
 
-### Conclusion
-
-Histogram distribution is not a suitable method for classifying the given set of images into six different categories due to the following reasons:
-
-1. **Similarity in Distribution**: Three categories share the same distribution, making it impossible to differentiate between them based on histogram data alone.
-2. **Insufficient Feature Representation**: Histograms fail to capture the necessary features and complexities of the images that could help in distinguishing between all six categories.
-3. **Ineffectiveness of Advanced Methods**: Even with complex statistical approaches, the inherent overlap in the distributions prevents accurate classification of the categories that share similar patterns.
-
-To achieve accurate classification, alternative methods should be considered, such as feature extraction techniques that capture more discriminative characteristics of the images, or machine learning models like Convolutional Neural Networks (CNNs) that are designed to handle the complexities of image data.
+# Iterate over each category folder
+for category in os.listdir(input_base_path):
+    category_path = os.path.join(input_base_path, category)
+    
+    # Ensure the current path is a directory
+    if os.path.isdir(category_path):
+        # Iterate over each file in the category folder
+        for filename in os.listdir(category_path):
+            file_path = os.path.join(category_path, filename)
+            
+            # Check if it's a file
+            if os.path.isfile(file_path):
+                # Construct the new filename
+                new_filename = f"{category}_{filename}"
+                new_file_path = os.path.join(output_path, new_filename)
+                
+                # Move and rename the file
+                shutil.move(file_path, new_file_path)
+                
+print("All files have been moved and renamed.")
