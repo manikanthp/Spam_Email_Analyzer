@@ -2,18 +2,26 @@ import pandas as pd
 
 # Sample data
 df_image = pd.DataFrame({
-    'Image_filename': ['img1.png', 'img2.png', 'img3.png'],
+    'Image_filename': ['filename1.jpg', 'filename2.png', 'filename3.jpg'],
     'Annotated images': ['']*3,
     'Validation': ['val1', 'val2', 'val3']
 })
 
 df_json = pd.DataFrame({
-    'json_filename': ['img1.png', 'img4.png']
+    'json_filename': ['filename1.json', 'filename4.json']
 })
 
-# Check if json_filename exists in Image_filename and update the Annotated images column
-df_image['Annotated images'] = df_image['Image_filename'].apply(
-    lambda x: 'Yes' if x in df_json['json_filename'].values else 'No'
+# Extract base filenames from Image_filename and json_filename
+df_image['base_filename'] = df_image['Image_filename'].apply(lambda x: x.rsplit('.', 1)[0])
+df_json['base_filename'] = df_json['json_filename'].apply(lambda x: x.rsplit('.', 1)[0])
+
+# Check if base_filename in df_json exists in df_image and update the Annotated images column
+df_image['Annotated images'] = df_image['base_filename'].apply(
+    lambda x: 'Yes' if x in df_json['base_filename'].values else 'No'
 )
+
+# Drop the temporary base_filename columns
+df_image.drop(columns=['base_filename'], inplace=True)
+df_json.drop(columns=['base_filename'], inplace=True)
 
 print(df_image)
