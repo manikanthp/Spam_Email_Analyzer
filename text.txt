@@ -1,28 +1,19 @@
 import pandas as pd
 
-# Sample DataFrame
-data = {'Name': ['folder1', 'image1.png', 'image2.jpg', 'file.zip', 'image1.PNG', 'data.json', 'image2.JPG', 'image3.png', 'image4.JPG', 'info.json']}
-df = pd.DataFrame(data)
+# Sample data
+df_image = pd.DataFrame({
+    'Image_filename': ['img1.png', 'img2.png', 'img3.png'],
+    'Annotated images': ['']*3,
+    'Validation': ['val1', 'val2', 'val3']
+})
 
-# Function to get file extension
-def get_extension(filename):
-    return filename.split('.')[-1].lower()
+df_json = pd.DataFrame({
+    'json_filename': ['img1.png', 'img4.png']
+})
 
-# Filter image files (extensions: png, jpg)
-image_extensions = ['png', 'jpg']
-image_files = df[df['Name'].apply(lambda x: get_extension(x) in image_extensions)]
+# Check if json_filename exists in Image_filename and update the Annotated images column
+df_image['Annotated images'] = df_image['Image_filename'].apply(
+    lambda x: 'Yes' if x in df_json['json_filename'].values else 'No'
+)
 
-# Count unique and duplicate image files
-unique_images = image_files['Name'].str.lower().nunique()
-total_images = len(image_files)
-duplicate_images = total_images - unique_images
-
-# Filter JSON files
-json_files = df[df['Name'].apply(lambda x: get_extension(x) == 'json')]
-json_count = len(json_files)
-
-# Display counts
-print("Unique Image Files:", unique_images)
-print("Duplicate Image Files:", duplicate_images)
-print("Total Image Files:", total_images)
-print("JSON File Count:", json_count)
+print(df_image)
