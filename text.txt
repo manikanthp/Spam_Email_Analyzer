@@ -1,27 +1,56 @@
-import pandas as pd
+import os
+import json
+import cv2
+import numpy as np
+from PIL import Image
 
-# Sample data
-df_image = pd.DataFrame({
-    'Image_filename': ['filename1.jpg', 'filename2.png', 'filename3.jpg'],
-    'Annotated images': ['']*3,
-    'Validation': ['val1', 'val2', 'val3']
-})
+def create_directory(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
-df_json = pd.DataFrame({
-    'json_filename': ['filename1.json', 'filename4.json']
-})
+def crop_polygon_from_image(image, polygon):
+    mask = np.zeros(image.shape[:2], dtype=np.uint8)
+    points = np.array(polygon, dtype=np.int32)
+    cv2.fillPoly(mask, [points], 255)
+    res = cv2.bitwise_and(image, image, mask=mask)
+    
+    rect = cv2.boundingRect(points)  # returns (x,y,w,h) of the rect
+    cropped = res[rect[1]:rect[1]+rect[3], rect[0]:rect[0]+rect[2]]
 
-# Extract base filenames from Image_filename and json_filename
-df_image['base_filename'] = df_image['Image_filename'].apply(lambda x: x.rsplit('.', 1)[0])
-df_json['base_filename'] = df_json['json_filename'].apply(lambda x: x.rsplit('.', 1)[0])
+    return cropped
 
-# Check if base_filename in df_json exists in df_image and update the Annotated images column
-df_image['Annotated images'] = df_image['base_filename'].apply(
-    lambda x: 'Yes' if x in df_json['base_filename'].values else 'No'
-)
+def save_cropped_images(image_path, json_path):
+    # Load image
+    image = cv2.imread(image_path)
+    if image is None:
+        print(f"Error: Cannot load image {image_path}")
+        return
+    
+    # Load json data
+    with open(json_path, 'r') as file:
+        data = json.load(file)
+    
+    # Process each shape
+    for shape in data['shapes']:
+        label = shape['label']
+        points = shape['points']
+        
+        # Create directory for the label if not exists
+        create_directory(label)
+        
+        # Crop the image
+        cropped_image = crop_polygon_from_image(image, points)
+        
+        # Save the cropped image
+        base_name = os.path.basename(image_path)
+        base_name_no_ext = os.path.splitext(base_name)[0]
+        cropped_image_path = os.path.join(label, f"{base_name_no_ext}_{label}.png")
+        cv2.imwrite(cropped_image_path, cropped_image)
+        print(f"Saved cropped image: {cropped_image_path}")
 
-# Drop the temporary base_filename columns
-df_image.drop(columns=['base_filename'], inplace=True)
-df_json.drop(columns=['base_filename'], inplace=True)
-
-print(df_image)
+if __name__ == "__main__":
+    # Example usage
+    json_file_path = 'path_to_your_json_file.json'
+    image_file_path = json_file_path.replace('.json', '.png')
+    
+    save_cropped_images(image_file_path, json_file_path)
