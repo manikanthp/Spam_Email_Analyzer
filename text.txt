@@ -1,54 +1,21 @@
-import cv2 as cv
-import numpy as np
 import os
-import glob
-from statistics import median
+import csv
 
-# Function to compute and normalize the histogram
-def compute_histogram(image, h_bins=50, s_bins=60):
-    hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-    histSize = [h_bins, s_bins]
-    h_ranges = [0, 180]
-    s_ranges = [0, 256]
-    ranges = h_ranges + s_ranges
-    channels = [0, 1]
-    hist = cv.calcHist([hsv_image], channels, None, histSize, ranges, accumulate=False)
-    cv.normalize(hist, hist, alpha=0, beta=1, norm_type=cv.NORM_MINMAX)
-    return hist
+def extract_image_filenames(folder_path):
+    image_files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f)) and f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff'))]
+    return image_files
 
-# Function to compare histograms and get the median correlation value for a folder
-def get_median_histogram_correlation(search_hist, folder_path):
-    correlations = []
-    for image_path in glob.glob(os.path.join(folder_path, '*.jpg')):  # Assuming images are in .jpg format
-        image = cv.imread(image_path)
-        if image is None:
-            continue
-        hist = compute_histogram(image)
-        correlation = cv.compareHist(search_hist, hist, cv.HISTCMP_CORREL)
-        correlations.append(correlation)
-    return median(correlations) if correlations else 0
+def save_to_csv(image_files, csv_filename):
+    with open(csv_filename, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(['Image Filename'])
+        for filename in image_files:
+            csv_writer.writerow([filename])
 
-# Main function to find the folder with the highest median correlation
-def find_best_matching_folder(search_image_path, folder_paths):
-    search_image = cv.imread(search_image_path)
-    if search_image is None:
-        raise FileNotFoundError(f"Search image not found: {search_image_path}")
-    
-    search_hist = compute_histogram(search_image)
-    folder_medians = {}
-    
-    for folder_path in folder_paths:
-        folder_name = os.path.basename(folder_path)
-        median_correlation = get_median_histogram_correlation(search_hist, folder_path)
-        folder_medians[folder_name] = median_correlation
-    
-    best_folder = max(folder_medians, key=folder_medians.get)
-    return best_folder, folder_medians
+if __name__ == "__main__":
+    folder_path = input("Enter the folder path: ")
+    csv_filename = input("Enter the CSV filename to save: ")
 
-# Paths to the search image and folders
-search_image_path = 'path_to_search_image.jpg'
-folder_paths = ['path_to_folder1', 'path_to_folder2', 'path_to_folder3', 'path_to_folder4', 'path_to_folder5', 'path_to_folder6']
-
-best_folder, folder_medians = find_best_matching_folder(search_image_path, folder_paths)
-print(f"Best matching folder: {best_folder}")
-print("Median correlations by folder:", folder_medians)
+    image_files = extract_image_filenames(folder_path)
+    save_to_csv(image_files, csv_filename)
+    print("Image filenames saved to", csv_filename)
