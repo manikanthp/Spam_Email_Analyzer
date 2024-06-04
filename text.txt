@@ -1,32 +1,16 @@
-import requests
+import pandas as pd
 
-# Function to download file from SharePoint
-def download_file_from_sharepoint(site_url, file_path, username, password, output_path):
-    # SharePoint REST API endpoint for file content
-    api_url = f"{site_url}/_api/web/GetFileByServerRelativeUrl('{file_path}')/$value"
-    
-    # Authentication headers
-    headers = {
-        "Accept": "application/json;odata=verbose"
-    }
-    
-    # Make request to SharePoint
-    response = requests.get(api_url, auth=(username, password), headers=headers)
-    
-    # Check if request was successful
-    if response.status_code == 200:
-        # Write file content to output path
-        with open(output_path, 'wb') as f:
-            f.write(response.content)
-        print("File downloaded successfully.")
-    else:
-        print("Failed to download file.")
+# Assuming df_manikanth_filename is the dataframe with column 'filename'
+# and df_vin is the dataframe with column 'VIN'
 
-# Example usage
-site_url = "https://your-sharepoint-site-url"
-file_path = "/sites/your-site/Documents/Example.docx"
-username = "your_username"
-password = "your_password"
-output_path = "downloaded_file.docx"
+# Perform a left join
+merged_df = pd.merge(df_manikanth_filename, df_vin, how='left', left_on='filename', right_on='VIN')
 
-download_file_from_sharepoint(site_url, file_path, username, password, output_path)
+# Create the 'judgement' column based on whether 'VIN' is null or not
+merged_df['judgement'] = merged_df['VIN'].apply(lambda x: 'Yes' if pd.notnull(x) else 'No')
+
+# Create a new dataframe with columns 'manikanth_filename' and 'judgement'
+result_df = merged_df[['filename', 'judgement']].rename(columns={'filename': 'manikanth_filename'})
+
+# Display or use the result_df as needed
+print(result_df)
