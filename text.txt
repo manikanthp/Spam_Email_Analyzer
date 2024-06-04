@@ -1,16 +1,6 @@
-import pandas as pd
-
-# Assuming df_manikanth_filename is the dataframe with column 'filename'
-# and df_vin is the dataframe with column 'VIN'
-
-# Perform a left join
-merged_df = pd.merge(df_manikanth_filename, df_vin, how='left', left_on='filename', right_on='VIN')
-
-# Create the 'judgement' column based on whether 'VIN' is null or not
-merged_df['judgement'] = merged_df['VIN'].apply(lambda x: 'Yes' if pd.notnull(x) else 'No')
-
-# Create a new dataframe with columns 'manikanth_filename' and 'judgement'
-result_df = merged_df[['filename', 'judgement']].rename(columns={'filename': 'manikanth_filename'})
-
-# Display or use the result_df as needed
-print(result_df)
+1. **Feature Learning**: Automatically learns hierarchical image features.
+2. **End-to-End Learning**: Directly maps images to predictions.
+3. **Non-linear Decision Boundaries**: Captures complex data patterns effectively.
+4. **Scale and Robustness**: Handles varied real-world image conditions.
+5. **Transfer Learning**: Utilizes pre-trained models efficiently.
+6. **Semantic Understanding**: Understands and segments image content.
