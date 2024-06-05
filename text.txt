@@ -1,9 +1,3 @@
-The YOLOv5 model is superior for capturing contextual features and localizing bearings within stacked bearing images, a task that histogram-based models cannot perform. To achieve even better results, consider fine-tuning with a balanced dataset, enhancing the architecture, or experimenting with alternative deep learning models.
-- YOLOv5 excels at contextual feature extraction.
-- It can localize bearings in stacked bearing images, unlike histogram-based models.
-- Further improvements can be achieved by fine-tuning with a balanced dataset, enhancing the architecture, or experimenting with different DL models.
-
-
-
-
-
+- Experiment with different models such as Detectron2 and fine-tune YOLOv8.
+- Adjust dataset size by balancing upsampling and downsampling.
+- Perform experiments to enhance model performance prior to deployment.
