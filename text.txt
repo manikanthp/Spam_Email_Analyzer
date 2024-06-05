@@ -1,10 +1,4 @@
-"In the histogram above, we can observe that the model's confusion matrix shows it is not achieving even 50% accuracy in its predictions."
-"A histogram-based model is most effective when the histogram patterns align well with each category, there is minimal variation in the image, and no contextual features are required."
-
-___________________________________________________
-
-"The deep learning-based YOLOv5 model yields better results, as evidenced by the confusion matrix above, where the diagonal shows higher values or greater color intensity compared to the histogram-based model."
-
+The YOLOv5 model is superior for capturing contextual features and localizing bearings within stacked bearing images, a task that histogram-based models cannot perform. To achieve even better results, consider fine-tuning with a balanced dataset, enhancing the architecture, or experimenting with alternative deep learning models.
 - YOLOv5 excels at contextual feature extraction.
 - It can localize bearings in stacked bearing images, unlike histogram-based models.
 - Further improvements can be achieved by fine-tuning with a balanced dataset, enhancing the architecture, or experimenting with different DL models.
