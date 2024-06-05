@@ -1,17 +1,15 @@
-Sure, here are some key points for showcasing the histogram-based approach and deep learning model-based approaches:
+"In the histogram above, we can observe that the model's confusion matrix shows it is not achieving even 50% accuracy in its predictions."
+"A histogram-based model is most effective when the histogram patterns align well with each category, there is minimal variation in the image, and no contextual features are required."
 
-**Histogram-based Approach:**
-1. **Simplicity:** Utilizes statistical distributions to represent image features.
-2. **Speed:** Generally faster in computation due to its simplicity.
-3. **Interpretability:** Results are often easier to interpret as they rely on straightforward statistical analysis.
-4. **Less Data Dependency:** Requires fewer training samples compared to deep learning approaches.
-5. **Less Computationally Intensive:** Suitable for resource-constrained environments or real-time applications where computational resources are limited.
+___________________________________________________
 
-**Deep Learning Model-based Approaches:**
-1. **Complexity:** Involves intricate neural network architectures for feature extraction and classification.
-2. **High Accuracy:** Deep learning models have demonstrated state-of-the-art performance in various image processing tasks.
-3. **Adaptability:** Can adapt to diverse datasets and complex image characteristics.
-4. **Feature Learning:** Automatically learns hierarchical representations of features from raw data.
-5. **Data Intensive:** Often requires large amounts of annotated data for training, which can be challenging to obtain and label.
+"The deep learning-based YOLOv5 model yields better results, as evidenced by the confusion matrix above, where the diagonal shows higher values or greater color intensity compared to the histogram-based model."
 
-These points can help in comparing and contrasting the two methodologies, showcasing their strengths and limitations for different applications.
+- YOLOv5 excels at contextual feature extraction.
+- It can localize bearings in stacked bearing images, unlike histogram-based models.
+- Further improvements can be achieved by fine-tuning with a balanced dataset, enhancing the architecture, or experimenting with different DL models.
+
+
+
+
+
