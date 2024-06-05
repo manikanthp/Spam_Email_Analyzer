@@ -1,3 +1,5 @@
-- Experiment with different models such as Detectron2 and fine-tune YOLOv8.
-- Adjust dataset size by balancing upsampling and downsampling.
-- Perform experiments to enhance model performance prior to deployment.
+1. **Bins for Data Analysis**
+2. **Frequency-Based Prediction**
+3. **Limited Complex Data**
+4. **Effective in Simple Distributions**
+5. **Common in Image Tasks**
