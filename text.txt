@@ -1,5 +1,32 @@
-1. **Bins for Data Analysis**
-2. **Frequency-Based Prediction**
-3. **Limited Complex Data**
-4. **Effective in Simple Distributions**
-5. **Common in Image Tasks**
+Course
+Essentials of Software-as-a-Service (SaaS) Business
+Python Packaging: Create and Publish Your Own Modules
+Architect SaaS Applications - Unique Challenges & Solutions
+Python and Django Full Stack Web Developer Bootcamp
+Complete Guitar Lessons System - Beginner to Advanced
+Python for Computer Vision with OpenCV and Deep Learning
+The Complete Neural Networks Bootcamp: Theory, Applications
+Jekyll: Make fast, secure static sites and blogs with jekyll
+Notion 101: Organize your personal & work life with ease
+
+
+AWS Certified Machine Learning Specialty 2023 - Hands On! (14 Hours)
+AWS Sagemaker Machine Learning Engineer in 30 days (43 Hours)
+
+
+
+LangChain- Develop LLM powered applications with LangChain (7.2 Hours)
+LLMs Mastery: Complete Guide to Transformers & Generative AI (2.6 Hours)
+Master LangChain Build #16 AI Apps-OpenAI, LLAMA2,HuggingFace (10 Hours)
+2024 Bootcamp: Generative AI + LLM App Development (25 Hours)
+LLM Fine Tuning on OpenAI (2 Hours)
+LangChain 101 for Beginners (OpenAI / ChatGPT / LLMOps) (1 Hour)
+Learn LangChain, Pinecone, OpenAI and Google's Gemini Models (10 Hours)
+
+
+
+Kubernetes for the Absolute Beginners - Hands-on ( 6 Hours) 
+Docker & Kubernetes: The Practical Guide [2024 Edition] (24 Hours)
+Docker for the Absolute Beginner - Hands On - DevOps (6 Hours)
+Spark and Python for Big Data with PySpark (11 Hours)
+PyTorch Ultimate 2023: From Basics to Cutting-Edge (18 Hours)
