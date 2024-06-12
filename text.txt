@@ -1,32 +1,53 @@
-Course
-Essentials of Software-as-a-Service (SaaS) Business
-Python Packaging: Create and Publish Your Own Modules
-Architect SaaS Applications - Unique Challenges & Solutions
-Python and Django Full Stack Web Developer Bootcamp
-Complete Guitar Lessons System - Beginner to Advanced
-Python for Computer Vision with OpenCV and Deep Learning
-The Complete Neural Networks Bootcamp: Theory, Applications
-Jekyll: Make fast, secure static sites and blogs with jekyll
-Notion 101: Organize your personal & work life with ease
+import os
+import json
+import pandas as pd
 
+def extract_labels_from_json(json_path):
+    with open(json_path, 'r') as file:
+        data = json.load(file)
+    
+    labels = [shape['label'] for shape in data['shapes']]
+    return labels
 
-AWS Certified Machine Learning Specialty 2023 - Hands On! (14 Hours)
-AWS Sagemaker Machine Learning Engineer in 30 days (43 Hours)
+def create_dataframe_from_json_files(folder_path):
+    all_files = os.listdir(folder_path)
+    json_files = [f for f in all_files if f.endswith('.json')]
+    
+    # Set to store all unique labels
+    unique_labels = set()
 
+    # Dictionary to hold the count of each label for each file
+    data_dict = {}
 
+    for json_file in json_files:
+        json_path = os.path.join(folder_path, json_file)
+        labels = extract_labels_from_json(json_path)
+        
+        # Count labels in the current file
+        label_count = {}
+        for label in labels:
+            if label not in unique_labels:
+                unique_labels.add(label)
+            label_count[label] = label_count.get(label, 0) + 1
+        
+        data_dict[json_file] = label_count
 
-LangChain- Develop LLM powered applications with LangChain (7.2 Hours)
-LLMs Mastery: Complete Guide to Transformers & Generative AI (2.6 Hours)
-Master LangChain Build #16 AI Apps-OpenAI, LLAMA2,HuggingFace (10 Hours)
-2024 Bootcamp: Generative AI + LLM App Development (25 Hours)
-LLM Fine Tuning on OpenAI (2 Hours)
-LangChain 101 for Beginners (OpenAI / ChatGPT / LLMOps) (1 Hour)
-Learn LangChain, Pinecone, OpenAI and Google's Gemini Models (10 Hours)
+    # Create a DataFrame
+    df = pd.DataFrame.from_dict(data_dict, orient='index').fillna(0)
+    
+    # Ensure all columns are present for all rows
+    for label in unique_labels:
+        if label not in df.columns:
+            df[label] = 0
 
+    # Reorder columns to have 'filename' as the first column
+    df.index.name = 'filename'
+    df.reset_index(inplace=True)
 
+    return df
 
-Kubernetes for the Absolute Beginners - Hands-on ( 6 Hours) 
-Docker & Kubernetes: The Practical Guide [2024 Edition] (24 Hours)
-Docker for the Absolute Beginner - Hands On - DevOps (6 Hours)
-Spark and Python for Big Data with PySpark (11 Hours)
-PyTorch Ultimate 2023: From Basics to Cutting-Edge (18 Hours)
+if __name__ == "__main__":
+    folder_path = 'path_to_your_folder'  # Replace with the path to your folder
+    df = create_dataframe_from_json_files(folder_path)
+    print(df)
+    df.to_csv('output.csv', index=False)  # Optionally save the dataframe to a CSV file
