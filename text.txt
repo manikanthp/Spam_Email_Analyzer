@@ -1,69 +1,65 @@
 import pandas as pd
 
-def extract_and_transform_data(csv_path):
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(csv_path)
+def extract_serial_and_angle(filename):
+    # Assuming the format is 'BearingAngleA_19UU32453.json' or '19UU32453_AngleA'
+    if 'BearingAngle' in filename:
+        parts = filename.split('_')
+        angle = parts[0][-1]  # A, B, or C
+        serial = parts[1].replace('.json', '')
+    else:
+        parts = filename.split('_')
+        serial = parts[0]
+        angle = parts[1][-1]  # A, B, or C
+    return serial, f'Angle{angle}'
+
+def compare_wear_counts(df1, df2):
+    # Initialize a list to hold the comparison results
+    results = []
+
+    # Iterate over each row in the first DataFrame
+    for index, row in df1.iterrows():
+        # Extract serial number and angle from the filename
+        serial, angle = extract_serial_and_angle(row['filename'])
+        
+        # Construct the VIN Judgements value to search in the second DataFrame
+        vin_judgements = f'{serial}_{angle}'
+        
+        # Find the matching row in the second DataFrame
+        matching_row = df2[df2['VIN Judgements'] == vin_judgements]
+        
+        if not matching_row.empty:
+            # Compare the wear counts
+            comparison = {
+                'filename': row['filename'],
+                'VIN Judgements': vin_judgements,
+                'heavywear_equal': row['heavywear'] == matching_row['heavywear'].values[0],
+                'peelingwear_equal': row['peelingwear'] == matching_row['peelingwear'].values[0],
+                'spunwear_equal': row['spunwear'] == matching_row['spunwear'].values[0],
+                'middlewear_equal': row['middlewear'] == matching_row['middlewear'].values[0],
+                'nowear_equal': row['nowear'] == matching_row['nowear'].values[0],
+                'spunwear_equal': row['spunwear'] == matching_row['spunwear'].values[0]  # This seems to be a duplicate in your example
+            }
+            results.append(comparison)
     
-    # Define the columns to be extracted
-    columns_to_extract = ['VIN']
-    columns_to_extract += [f'A{i}' for i in range(1, 13)]
-    columns_to_extract += [f'B{i}' for i in range(1, 13)]
-    columns_to_extract += [f'C{i}' for i in range(1, 13)]
+    # Convert the results to a DataFrame
+    comparison_df = pd.DataFrame(results)
     
-    # Extract the specified columns
-    extracted_df = df[columns_to_extract]
-    
-    # Initialize the list for the new DataFrame rows
-    new_rows = []
-    
-    # Iterate over each row in the extracted DataFrame
-    for _, row in extracted_df.iterrows():
-        vin = row['VIN']
-        
-        # Create rows for AngleA, AngleB, and AngleC
-        angle_a_row = {'VIN judgements': f'{vin}_AngleA'}
-        angle_b_row = {'VIN judgements': f'{vin}_AngleB'}
-        angle_c_row = {'VIN judgements': f'{vin}_AngleC'}
-        
-        # Count the categories for AngleA, AngleB, and AngleC separately
-        counts_a = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
-        counts_b = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
-        counts_c = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
-        
-        for col in [f'A{i}' for i in range(1, 13)]:
-            value = row[col]
-            if value in counts_a:
-                counts_a[value] += 1
-        
-        for col in [f'B{i}' for i in range(1, 13)]:
-            value = row[col]
-            if value in counts_b:
-                counts_b[value] += 1
-        
-        for col in [f'C{i}' for i in range(1, 13)]:
-            value = row[col]
-            if value in counts_c:
-                counts_c[value] += 1
-        
-        # Update the angle rows with the counts
-        angle_a_row.update(counts_a)
-        angle_b_row.update(counts_b)
-        angle_c_row.update(counts_c)
-        
-        # Add values from A1 to A12, B1 to B12, and C1 to C12 respectively
-        angle_a_row.update({col: row[col] for col in columns_to_extract if col.startswith('A')})
-        angle_b_row.update({col: row[col] for col in columns_to_extract if col.startswith('B')})
-        angle_c_row.update({col: row[col] for col in columns_to_extract if col.startswith('C')})
-        
-        new_rows.extend([angle_a_row, angle_b_row, angle_c_row])
-    
-    # Create a new DataFrame from the list of new rows
-    new_df = pd.DataFrame(new_rows)
-    
-    return new_df
+    return comparison_df
 
 if __name__ == "__main__":
-    csv_path = 'path_to_your_csv_file.csv'  # Replace with the path to your CSV file
-    transformed_df = extract_and_transform_data(csv_path)
-    print(transformed_df)
-    transformed_df.to_csv('transformed_output.csv', index=False)  # Optionally save the new DataFrame to a CSV file
+    # Replace these paths with the actual paths to your CSV files
+    file1_path = 'path_to_file1.csv'
+    file2_path = 'path_to_file2.csv'
+    
+    # Read the CSV files into DataFrames
+    df1 = pd.read_csv(file1_path)
+    df2 = pd.read_csv(file2_path)
+    
+    # Compare the wear counts and get the comparison DataFrame
+    comparison_df = compare_wear_counts(df1, df2)
+    
+    # Print the comparison results
+    print(comparison_df)
+    
+    # Optionally, save the comparison results to a CSV file
+    comparison_df.to_csv('comparison_results.csv', index=False)
