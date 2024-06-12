@@ -1,53 +1,53 @@
-import os
-import json
 import pandas as pd
 
-def extract_labels_from_json(json_path):
-    with open(json_path, 'r') as file:
-        data = json.load(file)
+def extract_and_transform_data(csv_path):
+    # Read the CSV file into a DataFrame
+    df = pd.read_csv(csv_path)
     
-    labels = [shape['label'] for shape in data['shapes']]
-    return labels
-
-def create_dataframe_from_json_files(folder_path):
-    all_files = os.listdir(folder_path)
-    json_files = [f for f in all_files if f.endswith('.json')]
+    # Define the columns to be extracted
+    columns_to_extract = ['VIN']
+    columns_to_extract += [f'A{i}' for i in range(1, 13)]
+    columns_to_extract += [f'B{i}' for i in range(1, 13)]
+    columns_to_extract += [f'C{i}' for i in range(1, 13)]
     
-    # Set to store all unique labels
-    unique_labels = set()
-
-    # Dictionary to hold the count of each label for each file
-    data_dict = {}
-
-    for json_file in json_files:
-        json_path = os.path.join(folder_path, json_file)
-        labels = extract_labels_from_json(json_path)
+    # Extract the specified columns
+    extracted_df = df[columns_to_extract]
+    
+    # Initialize the list for the new DataFrame rows
+    new_rows = []
+    
+    # Iterate over each row in the extracted DataFrame
+    for _, row in extracted_df.iterrows():
+        vin = row['VIN']
         
-        # Count labels in the current file
-        label_count = {}
-        for label in labels:
-            if label not in unique_labels:
-                unique_labels.add(label)
-            label_count[label] = label_count.get(label, 0) + 1
+        # Extract counts for the six categories (L, H, M, S, N, P)
+        counts = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
         
-        data_dict[json_file] = label_count
-
-    # Create a DataFrame
-    df = pd.DataFrame.from_dict(data_dict, orient='index').fillna(0)
+        # Assume the categories are part of the columns A1 to C12
+        for col in columns_to_extract[1:]:
+            value = row[col]
+            if value in counts:
+                counts[value] += 1
+        
+        # Create rows for AngleA, AngleB, and AngleC
+        angle_a_row = {'VIN judgements': f'{vin}_AngleA', **counts}
+        angle_b_row = {'VIN judgements': f'{vin}_AngleB', **counts}
+        angle_c_row = {'VIN judgements': f'{vin}_AngleC', **counts}
+        
+        # Add values from A1 to A12, B1 to B12, and C1 to C12 respectively
+        angle_a_row.update({col: row[col] for col in columns_to_extract if col.startswith('A')})
+        angle_b_row.update({col: row[col] for col in columns_to_extract if col.startswith('B')})
+        angle_c_row.update({col: row[col] for col in columns_to_extract if col.startswith('C')})
+        
+        new_rows.extend([angle_a_row, angle_b_row, angle_c_row])
     
-    # Ensure all columns are present for all rows
-    for label in unique_labels:
-        if label not in df.columns:
-            df[label] = 0
-
-    # Reorder columns to have 'filename' as the first column
-    df.index.name = 'filename'
-    df.reset_index(inplace=True)
-
-    return df
+    # Create a new DataFrame from the list of new rows
+    new_df = pd.DataFrame(new_rows)
+    
+    return new_df
 
 if __name__ == "__main__":
-    folder_path = 'path_to_your_folder'  # Replace with the path to your folder
-    df = create_dataframe_from_json_files(folder_path)
-    print(df)
-    df.to_csv('output.csv', index=False)  # Optionally save the dataframe to a CSV file
+    csv_path = 'path_to_your_csv_file.csv'  # Replace with the path to your CSV file
+    transformed_df = extract_and_transform_data(csv_path)
+    print(transformed_df)
+    transformed_df.to_csv('transformed_output.csv', index=False)  # Optionally save the new DataFrame to a CSV file
