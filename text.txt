@@ -20,19 +20,35 @@ def extract_and_transform_data(csv_path):
     for _, row in extracted_df.iterrows():
         vin = row['VIN']
         
-        # Extract counts for the six categories (L, H, M, S, N, P)
-        counts = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
-        
-        # Assume the categories are part of the columns A1 to C12
-        for col in columns_to_extract[1:]:
-            value = row[col]
-            if value in counts:
-                counts[value] += 1
-        
         # Create rows for AngleA, AngleB, and AngleC
-        angle_a_row = {'VIN judgements': f'{vin}_AngleA', **counts}
-        angle_b_row = {'VIN judgements': f'{vin}_AngleB', **counts}
-        angle_c_row = {'VIN judgements': f'{vin}_AngleC', **counts}
+        angle_a_row = {'VIN judgements': f'{vin}_AngleA'}
+        angle_b_row = {'VIN judgements': f'{vin}_AngleB'}
+        angle_c_row = {'VIN judgements': f'{vin}_AngleC'}
+        
+        # Count the categories for AngleA, AngleB, and AngleC separately
+        counts_a = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
+        counts_b = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
+        counts_c = {category: 0 for category in ['L', 'H', 'M', 'S', 'N', 'P']}
+        
+        for col in [f'A{i}' for i in range(1, 13)]:
+            value = row[col]
+            if value in counts_a:
+                counts_a[value] += 1
+        
+        for col in [f'B{i}' for i in range(1, 13)]:
+            value = row[col]
+            if value in counts_b:
+                counts_b[value] += 1
+        
+        for col in [f'C{i}' for i in range(1, 13)]:
+            value = row[col]
+            if value in counts_c:
+                counts_c[value] += 1
+        
+        # Update the angle rows with the counts
+        angle_a_row.update(counts_a)
+        angle_b_row.update(counts_b)
+        angle_c_row.update(counts_c)
         
         # Add values from A1 to A12, B1 to B12, and C1 to C12 respectively
         angle_a_row.update({col: row[col] for col in columns_to_extract if col.startswith('A')})
