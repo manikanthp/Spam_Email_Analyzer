@@ -1,11 +1,13 @@
 import os
 import shutil
 import random
+import pandas as pd
 
 # Paths
 source_folder = 'path/to/your/source/folder'
 train_folder = 'path/to/your/train/folder'
 test_folder = 'path/to/your/test/folder'
+no_json_csv = 'path/to/save/no_json_files.csv'
 
 # Create train and test folders if they do not exist
 os.makedirs(train_folder, exist_ok=True)
@@ -14,14 +16,17 @@ os.makedirs(test_folder, exist_ok=True)
 # Supported image extensions
 image_extensions = ['.jpg', '.JPG', '.png', '.PNG']
 
-# Collect all image-json pairs
+# Collect all image-json pairs and track images without json
 file_pairs = []
+no_json_files = []
 for filename in os.listdir(source_folder):
     if any(filename.endswith(ext) for ext in image_extensions):
         base_name = os.path.splitext(filename)[0]
         json_file = base_name + '.json'
         if json_file in os.listdir(source_folder):
             file_pairs.append((filename, json_file))
+        else:
+            no_json_files.append(filename)
 
 # Shuffle and split into train and test sets
 random.shuffle(file_pairs)
@@ -39,4 +44,9 @@ def move_files(pairs, dest_folder):
 move_files(train_pairs, train_folder)
 move_files(test_pairs, test_folder)
 
+# Save no_json files to a CSV
+no_json_df = pd.DataFrame(no_json_files, columns=['no_json'])
+no_json_df.to_csv(no_json_csv, index=False)
+
 print(f"Train and test split completed. Train files: {len(train_pairs)}, Test files: {len(test_pairs)}")
+print(f"Files without JSON saved to {no_json_csv}. Total: {len(no_json_files)}")
