@@ -1,65 +1,42 @@
-import pandas as pd
+import os
+import shutil
+import random
 
-def extract_serial_and_angle(filename):
-    # Assuming the format is 'BearingAngleA_19UU32453.json' or '19UU32453_AngleA'
-    if 'BearingAngle' in filename:
-        parts = filename.split('_')
-        angle = parts[0][-1]  # A, B, or C
-        serial = parts[1].replace('.json', '')
-    else:
-        parts = filename.split('_')
-        serial = parts[0]
-        angle = parts[1][-1]  # A, B, or C
-    return serial, f'Angle{angle}'
+# Paths
+source_folder = 'path/to/your/source/folder'
+train_folder = 'path/to/your/train/folder'
+test_folder = 'path/to/your/test/folder'
 
-def compare_wear_counts(df1, df2):
-    # Initialize a list to hold the comparison results
-    results = []
+# Create train and test folders if they do not exist
+os.makedirs(train_folder, exist_ok=True)
+os.makedirs(test_folder, exist_ok=True)
 
-    # Iterate over each row in the first DataFrame
-    for index, row in df1.iterrows():
-        # Extract serial number and angle from the filename
-        serial, angle = extract_serial_and_angle(row['filename'])
-        
-        # Construct the VIN Judgements value to search in the second DataFrame
-        vin_judgements = f'{serial}_{angle}'
-        
-        # Find the matching row in the second DataFrame
-        matching_row = df2[df2['VIN Judgements'] == vin_judgements]
-        
-        if not matching_row.empty:
-            # Compare the wear counts
-            comparison = {
-                'filename': row['filename'],
-                'VIN Judgements': vin_judgements,
-                'heavywear_equal': row['heavywear'] == matching_row['heavywear'].values[0],
-                'peelingwear_equal': row['peelingwear'] == matching_row['peelingwear'].values[0],
-                'spunwear_equal': row['spunwear'] == matching_row['spunwear'].values[0],
-                'middlewear_equal': row['middlewear'] == matching_row['middlewear'].values[0],
-                'nowear_equal': row['nowear'] == matching_row['nowear'].values[0],
-                'spunwear_equal': row['spunwear'] == matching_row['spunwear'].values[0]  # This seems to be a duplicate in your example
-            }
-            results.append(comparison)
-    
-    # Convert the results to a DataFrame
-    comparison_df = pd.DataFrame(results)
-    
-    return comparison_df
+# Supported image extensions
+image_extensions = ['.jpg', '.JPG', '.png', '.PNG']
 
-if __name__ == "__main__":
-    # Replace these paths with the actual paths to your CSV files
-    file1_path = 'path_to_file1.csv'
-    file2_path = 'path_to_file2.csv'
-    
-    # Read the CSV files into DataFrames
-    df1 = pd.read_csv(file1_path)
-    df2 = pd.read_csv(file2_path)
-    
-    # Compare the wear counts and get the comparison DataFrame
-    comparison_df = compare_wear_counts(df1, df2)
-    
-    # Print the comparison results
-    print(comparison_df)
-    
-    # Optionally, save the comparison results to a CSV file
-    comparison_df.to_csv('comparison_results.csv', index=False)
+# Collect all image-json pairs
+file_pairs = []
+for filename in os.listdir(source_folder):
+    if any(filename.endswith(ext) for ext in image_extensions):
+        base_name = os.path.splitext(filename)[0]
+        json_file = base_name + '.json'
+        if json_file in os.listdir(source_folder):
+            file_pairs.append((filename, json_file))
+
+# Shuffle and split into train and test sets
+random.shuffle(file_pairs)
+split_index = int(0.8 * len(file_pairs))
+train_pairs = file_pairs[:split_index]
+test_pairs = file_pairs[split_index:]
+
+# Function to move files to respective folders
+def move_files(pairs, dest_folder):
+    for image_file, json_file in pairs:
+        shutil.move(os.path.join(source_folder, image_file), os.path.join(dest_folder, image_file))
+        shutil.move(os.path.join(source_folder, json_file), os.path.join(dest_folder, json_file))
+
+# Move files to train and test folders
+move_files(train_pairs, train_folder)
+move_files(test_pairs, test_folder)
+
+print(f"Train and test split completed. Train files: {len(train_pairs)}, Test files: {len(test_pairs)}")
