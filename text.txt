@@ -1,52 +1,14 @@
-import os
-import shutil
-import random
-import pandas as pd
+As today is my last day, I wanted to express how lucky I feel to have had a manager like you. Your support and guidance have been invaluable, and I am very grateful for everything you've done. I hope to have the privilege of working with someone like you in the future.
 
-# Paths
-source_folder = 'path/to/your/source/folder'
-train_folder = 'path/to/your/train/folder'
-test_folder = 'path/to/your/test/folder'
-no_json_csv = 'path/to/save/no_json_files.csv'
 
-# Create train and test folders if they do not exist
-os.makedirs(train_folder, exist_ok=True)
-os.makedirs(test_folder, exist_ok=True)
 
-# Supported image extensions
-image_extensions = ['.jpg', '.JPG', '.png', '.PNG']
+Hi Harsh,
 
-# Collect all image-json pairs and track images without json
-file_pairs = []
-no_json_files = []
-for filename in os.listdir(source_folder):
-    if any(filename.endswith(ext) for ext in image_extensions):
-        base_name = os.path.splitext(filename)[0]
-        json_file = base_name + '.json'
-        if json_file in os.listdir(source_folder):
-            file_pairs.append((filename, json_file))
-        else:
-            no_json_files.append(filename)
+It's been a great experience working with you and learning new skills from you. Your ability to handle pressure and your working style have truly impressed me. I appreciate how you helped me with the project, taking on the work and dividing it according to our strengths. Seeing you manage all the technical aspects of the projects was very inspiring, and I hope to apply the same practices in my future endeavors.
 
-# Shuffle and split into train and test sets
-random.shuffle(file_pairs)
-split_index = int(0.8 * len(file_pairs))
-train_pairs = file_pairs[:split_index]
-test_pairs = file_pairs[split_index:]
+Thank you for everything, Harsh. I hope we can stay in touch!
 
-# Function to move files to respective folders
-def move_files(pairs, dest_folder):
-    for image_file, json_file in pairs:
-        shutil.move(os.path.join(source_folder, image_file), os.path.join(dest_folder, image_file))
-        shutil.move(os.path.join(source_folder, json_file), os.path.join(dest_folder, json_file))
 
-# Move files to train and test folders
-move_files(train_pairs, train_folder)
-move_files(test_pairs, test_folder)
+It's been great working with you. You've been so supportive and friendly, never letting age be a barrier to our communication. I’ve appreciated how smoothly and openly we've been able to talk. I will definitely learn from your behavior and apply it in my entire life and with colleagues in future companies.
 
-# Save no_json files to a CSV
-no_json_df = pd.DataFrame(no_json_files, columns=['no_json'])
-no_json_df.to_csv(no_json_csv, index=False)
-
-print(f"Train and test split completed. Train files: {len(train_pairs)}, Test files: {len(test_pairs)}")
-print(f"Files without JSON saved to {no_json_csv}. Total: {len(no_json_files)}")
+Thank you for everything!
